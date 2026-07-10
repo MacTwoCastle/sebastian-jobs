@@ -1,0 +1,25 @@
+{
+  "name": "Sebastian Steinhäuser",
+  "slug": "sebastian",
+  "subtitle": "M.Sc. Maschinenbau · Strömungslehre · Fahrzeugdynamik · NVH/Akustik · Messtechnik · KIT Karlsruhe",
+  "searchStatus": "EU-Recherche aktiv",
+  "standDatum": "07.07.2026",
+  "skills": [
+    "CFD", "Strömungsmechanik", "Fluid Dynamics", "Fahrzeugdynamik",
+    "NVH", "Akustik", "Aerodynamik", "Thermodynamik", "Messtechnik",
+    "STAR-CCM+", "ANSYS", "Python", "Maschinenbau", "Versuch",
+    "Simulation", "Segelflug", "Akaflieg", "Optische Messtechnik"
+  ],
+  "branchen": [
+    "Automotive", "Luft- & Raumfahrt", "Energie", "Forschung",
+    "Verteidigung", "Industrie", "Hausgeräte", "NVH / Akustik", "Messtechnik"
+  ],
+  "laender": [
+    "Deutschland", "Frankreich", "Österreich", "Niederlande",
+    "Dänemark", "Schweden", "Belgien", "Spanien"
+  ],
+  "firmenInfobox": "<strong>Profil-Matching:</strong> Aufgelistet sind EU-Unternehmen, deren Produkte und Prozesse Know-how in <strong>Strömungsmechanik, Fahrzeugdynamik, NVH/Akustik, Messtechnik und CFD-Simulation</strong> erfordern – passend zu Sebastians M.Sc.-Schwerpunkten, ISTM-Forschung (Tropfenaufprall, optische Messtechnik) und Akaflieg-Erfahrung. Filterbar nach Branche, Land, Größe und Relevanz.",
+  "jobsInfobox": "<strong>Quellen:</strong> StepStone, Indeed, XING – recherchiert am 07.07.2026. Stellen sind aktuell offen (soweit erkennbar). Klicke auf <em>Jetzt bewerben</em> für den direkten Link zur Stellenanzeige.",
+  "linkedinKeywordsTipp": "Empfohlene Keywords: <em>CFD Engineer, Fluid Dynamics Engineer, Strömungsingenieur, Aerodynamik Ingenieur, Simulation Engineer Thermofluiddynamik</em>",
+  "linkedinCompaniesTipp": "Profile von Firmen wie <strong>Airbus, Siemens Energy, MTU, BMW, Porsche, MAHLE, Voith, DLR, Fraunhofer</strong> direkt folgen"
+}

@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192">
+  <rect width="192" height="192" rx="32" fill="#1a3a5c"/>
+  <!-- Outer ring -->
+  <circle cx="96" cy="88" r="56" fill="none" stroke="#e87722" stroke-width="9"/>
+  <!-- Middle ring -->
+  <circle cx="96" cy="88" r="36" fill="none" stroke="#e87722" stroke-width="8" opacity="0.7"/>
+  <!-- Bull's eye -->
+  <circle cx="96" cy="88" r="16" fill="#e87722"/>
+  <!-- Cross hair horizontal -->
+  <line x1="28" y1="88" x2="68" y2="88" stroke="#ffffff" stroke-width="5" opacity="0.5"/>
+  <line x1="124" y1="88" x2="164" y2="88" stroke="#ffffff" stroke-width="5" opacity="0.5"/>
+  <!-- Cross hair vertical -->
+  <line x1="96" y1="20" x2="96" y2="60" stroke="#ffffff" stroke-width="5" opacity="0.5"/>
+  <line x1="96" y1="116" x2="96" y2="156" stroke="#ffffff" stroke-width="5" opacity="0.5"/>
+  <!-- Label bar -->
+  <rect x="36" y="158" width="120" height="14" rx="7" fill="#ffffff" opacity="0.25"/>
+</svg>
