@@ -1,0 +1,9 @@
+{
+  "pdf": "Ulf_Petersen_CV_1.test.pdf",
+  "ocr_applied": false,
+  "non_whitespace_chars": 5627,
+  "txt_raw": "./Ulf/ki-ready-linux-test/01_txt_raw/Ulf_Petersen_CV_1.test.txt",
+  "txt_clean": "./Ulf/ki-ready-linux-test/02_txt_clean/Ulf_Petersen_CV_1.test.clean.txt",
+  "markdown": "./Ulf/ki-ready-linux-test/03_markdown/Ulf_Petersen_CV_1.test.md",
+  "chunks": 2
+}

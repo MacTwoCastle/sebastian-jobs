@@ -168,7 +168,7 @@ if (-not (Test-Path -LiteralPath $inputPath)) {
     throw "InputDir existiert nicht: $InputDir"
 }
 
-$pdfFiles = Get-ChildItem -Path $inputPath -Filter "*.pdf" -File
+$pdfFiles = @(Get-ChildItem -Path $inputPath -Filter "*.pdf" -File)
 if ($pdfFiles.Count -eq 0) {
     Write-Host "Keine PDF-Dateien gefunden in: $inputPath"
     exit 0
