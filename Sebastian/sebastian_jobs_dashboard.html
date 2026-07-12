@@ -41,7 +41,7 @@
   .tab.active { color: var(--primary); border-bottom-color: var(--accent); }
 
   /* CONTAINER */
-  .container { padding: 24px 28px; max-width: 1400px; }
+  .container { padding: 24px 28px; max-width: 1800px; }
   .tab-content { display: none; }
   .tab-content.active { display: block; }
 
@@ -136,6 +136,38 @@
   .tooltip { position: relative; cursor: help; }
   .tooltip::after { content: attr(data-tip); position: absolute; bottom: 120%; left: 50%; transform: translateX(-50%); background: #333; color: #fff; padding: 5px 9px; border-radius: 5px; font-size: 0.72rem; white-space: nowrap; pointer-events: none; opacity: 0; transition: opacity .2s; z-index: 10; }
   .tooltip:hover::after { opacity: 1; }
+
+  /* MODAL */
+  .modal-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 100; justify-content: center; align-items: center; }
+  .modal-overlay.active { display: flex; }
+  .modal-content { background: #fff; border-radius: 12px; width: 90%; max-width: 900px; max-height: 85vh; overflow-y: auto; box-shadow: 0 10px 50px rgba(0,0,0,0.3); }
+  .modal-header { background: var(--primary); color: #fff; padding: 18px 24px; display: flex; justify-content: space-between; align-items: center; border-radius: 12px 12px 0 0; }
+  .modal-header h2 { margin: 0; font-size: 1.2rem; font-weight: 700; }
+  .modal-close { background: none; border: none; color: #fff; font-size: 1.5rem; cursor: pointer; padding: 0; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; }
+  .modal-close:hover { opacity: 0.75; }
+  .modal-tabs { display: flex; border-bottom: 2px solid var(--border); padding: 0 24px; background: #f9f9f9; }
+  .modal-tab { padding: 14px 20px; cursor: pointer; font-weight: 600; color: var(--muted); border-bottom: 3px solid transparent; margin-bottom: -2px; transition: all .2s; font-size: 0.9rem; background: none; border: none; }
+  .modal-tab:hover { color: var(--primary); }
+  .modal-tab.active { color: var(--primary); border-bottom-color: var(--accent); }
+  .modal-body { padding: 24px; }
+  .tab-pane { display: none; }
+  .tab-pane.active { display: block; }
+  .checklist-item { display: flex; gap: 12px; margin-bottom: 14px; padding: 12px; background: #f9f9f9; border-left: 3px solid var(--accent2); border-radius: 5px; }
+  .checklist-checkbox { display: flex; align-items: flex-start; margin-top: 2px; }
+  .checklist-checkbox input { width: 18px; height: 18px; cursor: pointer; accent-color: var(--accent); }
+  .checklist-content { flex: 1; }
+  .checklist-content strong { display: block; font-size: 0.9rem; color: var(--text); margin-bottom: 3px; }
+  .checklist-content p { font-size: 0.82rem; color: var(--muted); margin: 0; line-height: 1.5; }
+  .generator-section { margin-bottom: 18px; }
+  .generator-section label { display: block; font-weight: 700; color: var(--text); font-size: 0.85rem; margin-bottom: 8px; text-transform: uppercase; }
+  .generator-section input, .generator-section textarea { width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 0.85rem; font-family: inherit; }
+  .generator-section textarea { min-height: 80px; resize: vertical; }
+  .generator-section input:focus, .generator-section textarea:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 3px rgba(232,119,34,0.2); }
+  .generator-btn { padding: 8px 16px; background: var(--accent); color: #fff; border: none; border-radius: 6px; cursor: pointer; font-size: 0.85rem; font-weight: 600; transition: opacity .2s; }
+  .generator-btn:hover { opacity: 0.85; }
+  .generator-output { background: #f0f8ff; border: 1px solid #cce5ff; border-radius: 6px; padding: 14px; margin-top: 12px; font-size: 0.84rem; line-height: 1.6; color: var(--text); font-family: 'Courier New', monospace; white-space: pre-wrap; word-wrap: break-word; }
+  .skills-chip { display: inline-block; background: var(--accent2); color: #fff; padding: 3px 10px; border-radius: 14px; font-size: 0.72rem; font-weight: 600; margin: 3px 4px 3px 0; }
+  .gap-alert { background: #fff3cd; border: 1px solid #ffc107; border-radius: 6px; padding: 12px; margin-bottom: 14px; font-size: 0.84rem; color: #856404; }
 </style>
 </head>
 <body>
@@ -379,6 +411,41 @@
 
 </div><!-- /container -->
 
+<!-- MODAL: BEWERBUNGSTIPPS -->
+<div id="tips-modal" class="modal-overlay">
+  <div class="modal-content">
+    <div class="modal-header">
+      <div>
+        <h2>💡 Bewerbungstipps für <span id="tips-job-title"></span></h2>
+        <p style="margin: 2px 0 0 0; font-size: 0.85rem; opacity: 0.85;" id="tips-job-company"></p>
+      </div>
+      <button class="modal-close" onclick="closeTipsModal()">✕</button>
+    </div>
+    <div class="modal-tabs">
+      <button class="modal-tab active" onclick="switchTipsTab('cv')">📋 CV-Optimierung</button>
+      <button class="modal-tab" onclick="switchTipsTab('letter')">✍️ Anschreiben-Generator</button>
+    </div>
+    <div class="modal-body">
+      <!-- TAB: CV-OPTIMIERUNG -->
+      <div id="tips-tab-cv" class="tab-pane active">
+        <h3 style="font-size: 0.95rem; font-weight: 700; color: var(--primary); margin-bottom: 12px;">Ihre Chancen verbessern – Checkliste für diese Stelle:</h3>
+        <div id="cv-checklist"></div>
+      </div>
+      <!-- TAB: ANSCHREIBEN-GENERATOR -->
+      <div id="tips-tab-letter" class="tab-pane">
+        <h3 style="font-size: 0.95rem; font-weight: 700; color: var(--primary); margin-bottom: 12px;">Motivationsschreiben-Generator</h3>
+        <p style="font-size: 0.84rem; color: var(--muted); margin-bottom: 16px;">Der Generator verbindet Ihre Skills mit den Anforderungen der Stelle. Nutzen Sie die Vorschläge als Bausteine für Ihr Anschreiben.</p>
+        <div class="generator-section"><label>Ihr Name</label><input type="text" id="letter-name" placeholder="Max Mustermann"></div>
+        <div class="generator-section"><label>Ansprechperson (optional)</label><input type="text" id="letter-contact" placeholder="z.B. Frau Schmidt"></div>
+        <div class="generator-section"><label>Ihre Key-Skills für diese Rolle</label><textarea id="letter-skills" placeholder="CFD-Expertise, Simulation, experimentelle Validierung..."></textarea></div>
+        <div class="generator-section"><label>Warum interessiert Sie diese Stelle?</label><textarea id="letter-motivation" placeholder="z.B. Die innovative Messtechnik, das R&D Team, die Branchenerfahrung..."></textarea></div>
+        <div style="display: flex; gap: 8px; flex-wrap: wrap;"><button class="generator-btn" onclick="generateLetterOpening()">📝 Eröffnung</button><button class="generator-btn" onclick="generateLetterBody()">💼 Hauptteil</button><button class="generator-btn" onclick="generateLetterClosing()">✋ Abschluss</button><button class="generator-btn" style="background: var(--green);" onclick="generateFullLetter()">🚀 Komplett</button></div>
+        <div id="letter-output"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
 // ===== DATA: CANDIDATE-SPECIFIC (auto-generated - do not edit manually) =====
 const PROFILE = {
@@ -445,21 +512,21 @@ const jobsData = [
   { "title": "Ingenieur CFD-Simulation & numerische Optimierung", "company": "SHENGU Europäisches Forschungszentrum GmbH", "ort": "Aachen, Deutschland", "land": "Deutschland", "branche": "Forschung", "remote": "Hybrid", "sprache": "Englisch", "veroeffentlicht": "vor 3 Tagen", "alter_tage": 3, "match": 4, "level": "Junior (1–3 J.)", "anforderungen": "Master Strömungsmechanik; 1–3 J. CFD-Erfahrung; STAR-CCM+; Python; Turbomaschinen v. Vorteil; Englisch", "link": "https://www.stepstone.de/stellenangebote--Ingenieur-CFD-Simulation-numerische-Optimierung-Aachen-SHENGU-Europaeisches-Forschungszentrum-GmbH--14234649-inline.html", "quelle": "StepStone" },
   { "title": "Ingenieur Aerodynamik & Schaufelauslegung", "company": "SHENGU Europäisches Forschungszentrum GmbH", "ort": "Aachen, Deutschland", "land": "Deutschland", "branche": "Forschung", "remote": "Hybrid", "sprache": "Englisch", "veroeffentlicht": "vor 3 Tagen", "alter_tage": 3, "match": 4, "level": "Einsteiger", "anforderungen": "Master Maschinenbau/Luft- und Raumfahrt; Aerodynamik; CFD; Turbomaschinen", "link": "https://www.stepstone.de/stellenangebote--Ingenieur-Aerodynamik-Schaufelauslegung-Aachen-SHENGU-Europaeisches-Forschungszentrum-GmbH--14234650-inline.html", "quelle": "StepStone" },
   { "title": "CFD Simulation Engineer (m/w/d) – Aeroakustik & Turbomaschinen", "company": "Wingfan Ltd. & Co. KG", "ort": "Hamburg, Deutschland", "land": "Deutschland", "branche": "Industrie", "remote": "Hybrid", "sprache": "Deutsch", "veroeffentlicht": "vor 2 Wochen", "alter_tage": 14, "match": 4, "level": "Junior (1–3 J.)", "anforderungen": "Master Maschinenbau/Strömungsmechanik; STAR-CCM+; CFD-Aeroakustik; FSI; Deutsch C1", "link": "https://www.stepstone.de/stellenangebote--CFD-Simulation-Engineer-m-w-d-Aeroakustik-Turbomaschinen-Hamburg-Wingfan-Ltd-Co-KG--14183956-inline.html", "quelle": "StepStone" },
-  { "title": "Aerodynamic Design & Analysis Engineer (m/w/d) – Airbus", "company": "HESYS TechnicalSystems / Airbus", "ort": "Manching, Deutschland", "land": "Deutschland", "branche": "Luft- & Raumfahrt", "remote": "Onsite", "sprache": "Englisch", "veroeffentlicht": "aktuell", "alter_tage": 5, "match": 4, "level": "Junior (1–3 J.)", "anforderungen": "Master Maschinenbau/Luft- und Raumfahrt; Aerodynamik-Analyse; Erfahrung in Industrie-Engineering", "link": "https://de.indeed.com/jobs?q=Aerodynamic+Design+Analysis+Engineer+Airbus&l=Deutschland", "quelle": "Indeed" },
-  { "title": "CFD Software Engineer", "company": "Siemens AG", "ort": "Hamburg, Deutschland", "land": "Deutschland", "branche": "Industrie", "remote": "Hybrid", "sprache": "Englisch", "veroeffentlicht": "aktuell", "alter_tage": 7, "match": 4, "level": "Junior (1–3 J.)", "anforderungen": "M.Sc. Maschinenbau/Computational Mechanics; CFD-Softwareentwicklung; C++; Python", "link": "https://de.indeed.com/jobs?q=CFD+Software+Engineer+Siemens&l=Hamburg", "quelle": "Indeed" },
-  { "title": "Propulsion Design Engineer (m/f/d)", "company": "Isar Aerospace SE", "ort": "München, Deutschland", "land": "Deutschland", "branche": "Luft- & Raumfahrt", "remote": "Hybrid", "sprache": "Englisch", "veroeffentlicht": "aktuell", "alter_tage": 6, "match": 4, "level": "Einsteiger", "anforderungen": "M.Sc. Maschinenbau/Luft- und Raumfahrt; Fluid Dynamics; Combustion; Triebwerke; Englisch fließend", "link": "https://de.indeed.com/jobs?q=Propulsion+Design+Engineer+Isar+Aerospace&l=M%C3%BCnchen", "quelle": "Indeed" },
+  { "title": "Aerodynamic Design & Analysis Engineer (m/w/d) – Airbus", "company": "HESYS TechnicalSystems / Airbus", "ort": "Manching, Deutschland", "land": "Deutschland", "branche": "Luft- & Raumfahrt", "remote": "Onsite", "sprache": "Englisch", "veroeffentlicht": "aktuell", "alter_tage": 5, "match": 4, "level": "Junior (1–3 J.)", "anforderungen": "Master Maschinenbau/Luft- und Raumfahrt; Aerodynamik-Analyse; Erfahrung in Industrie-Engineering", "link": "https://hesys-engineering.de/jobs/", "quelle": "HESYS Careers" },
+  { "title": "CFD Software Engineer", "company": "Siemens AG", "ort": "Hamburg, Deutschland", "land": "Deutschland", "branche": "Industrie", "remote": "Hybrid", "sprache": "Englisch", "veroeffentlicht": "aktuell", "alter_tage": 7, "match": 4, "level": "Junior (1–3 J.)", "anforderungen": "M.Sc. Maschinenbau/Computational Mechanics; CFD-Softwareentwicklung; C++; Python", "link": "https://de.indeed.com/viewjob?jk=2bc6064a39cc06e2", "quelle": "Indeed" },
+  { "title": "Propulsion Design Engineer (m/f/d)", "company": "Isar Aerospace SE", "ort": "München, Deutschland", "land": "Deutschland", "branche": "Luft- & Raumfahrt", "remote": "Hybrid", "sprache": "Englisch", "veroeffentlicht": "aktuell", "alter_tage": 6, "match": 4, "level": "Einsteiger", "anforderungen": "M.Sc. Maschinenbau/Luft- und Raumfahrt; Fluid Dynamics; Combustion; Triebwerke; Englisch fließend", "link": "https://job-boards.greenhouse.io/isaraerospace", "quelle": "Isar Aerospace Careers" },
   { "title": "Berechnungsingenieur – Strömungsmechanik (m/w/d)", "company": "Rheinmetall Waffe Munition GmbH", "ort": "Unterlüß bei Celle, Deutschland", "land": "Deutschland", "branche": "Verteidigung", "remote": "Onsite", "sprache": "Deutsch", "veroeffentlicht": "vor 1 Woche", "alter_tage": 7, "match": 3, "level": "Junior (1–3 J.)", "anforderungen": "Maschinenbaustudium Schwerpunkt Strömungsmechanik; CFD (TAU); Python, C/C++; Außenballistik; Linux", "link": "https://www.stepstone.de/stellenangebote--Berechnungsingenieur-Stroemungsmechanik-m-w-d-Unterluess-bei-Celle-Rheinmetall-Waffe-Munition-GmbH--13764707-inline.html", "quelle": "StepStone" },
   { "title": "Entwicklungsingenieur (m/w/d) – Flugkörperkonzeption, Aerodynamik", "company": "Diehl Defence GmbH & Co. KG", "ort": "Überlingen am Bodensee, Deutschland", "land": "Deutschland", "branche": "Verteidigung", "remote": "Onsite", "sprache": "Deutsch", "veroeffentlicht": "vor 4 Tagen", "alter_tage": 4, "match": 3, "level": "Junior (1–3 J.)", "anforderungen": "Master Maschinenbau/Luft- und Raumfahrt; Aerodynamik; Flugmechanik; Konzeptionierung Lenkflugkörper", "link": "https://www.stepstone.de/stellenangebote--Entwicklungsingenieur-m-w-d-fuer-Flugkoerperkonzeption-Aerodynamik-und-Flugmechanik-Ueberlingen-am-Bodensee-Diehl-Defence-GmbH-Co-KG--14227457-inline.html", "quelle": "StepStone" },
   { "title": "Simulationsingenieur CFD / Thermofluiddynamik (all gender)", "company": "ALTEN Consulting Services GmbH", "ort": "Kaufering, Deutschland", "land": "Deutschland", "branche": "Industrie", "remote": "Hybrid", "sprache": "Deutsch", "veroeffentlicht": "vor 1 Woche", "alter_tage": 7, "match": 4, "level": "Einsteiger", "anforderungen": "Master Maschinenbau/Thermodynamik; CFD; Automotive-Erfahrung von Vorteil", "link": "https://www.stepstone.de/stellenangebote--Simulationsingenieur-CFD-Thermofluiddynamik-all-gender-Kaufering-ALTEN-Consulting-Services-GmbH--14147327-inline.html", "quelle": "StepStone" },
-  { "title": "CFD / Thermohydraulik Ingenieur (m/w/d) – Reaktorsysteme", "company": "Framatome SAS", "ort": "Erlangen, Deutschland", "land": "Deutschland", "branche": "Energie", "remote": "Hybrid", "sprache": "Deutsch", "veroeffentlicht": "aktuell", "alter_tage": 5, "match": 5, "level": "Einsteiger", "anforderungen": "Master Maschinenbau/Energietechnik; CFD (ANSYS Fluent/CFX); Thermohydraulik Reaktoranlagen; Deutsch + Englisch fließend", "link": "https://www.framatome.com/en/human-resources/", "quelle": "Framatome Careers" },
+  { "title": "CFD / Thermohydraulik Ingenieur (m/w/d) – Reaktorsysteme", "company": "Framatome SAS", "ort": "Erlangen, Deutschland", "land": "Deutschland", "branche": "Energie", "remote": "Hybrid", "sprache": "Deutsch", "veroeffentlicht": "aktuell", "alter_tage": 5, "match": 5, "level": "Einsteiger", "anforderungen": "Master Maschinenbau/Energietechnik; CFD (ANSYS Fluent/CFX); Thermohydraulik Reaktoranlagen; Deutsch + Englisch fließend", "link": "https://www.framatome.com/en/jobseekers/job-offers/", "quelle": "Framatome Careers" },
   { "title": "Thermal-Hydraulic Analysis Engineer (m/f/d)", "company": "Westinghouse Electric Company", "ort": "Västerås, Schweden", "land": "Schweden", "branche": "Energie", "remote": "Hybrid", "sprache": "Englisch", "veroeffentlicht": "aktuell", "alter_tage": 7, "match": 4, "level": "Junior (1–3 J.)", "anforderungen": "M.Sc. Nuclear/Mechanical Engineering; Thermohydraulik; RELAP5, TRACE oder CFD; Englisch fließend", "link": "https://careers.westinghousenuclear.com/", "quelle": "Westinghouse Careers" },
   { "title": "Simulation Engineer – Turbines & Power Generation (m/f/d)", "company": "GE Vernova", "ort": "Mannheim, Deutschland", "land": "Deutschland", "branche": "Energie", "remote": "Hybrid", "sprache": "Englisch", "veroeffentlicht": "aktuell", "alter_tage": 6, "match": 4, "level": "Junior (1–3 J.)", "anforderungen": "M.Sc. Maschinenbau/Energietechnik; CFD Turbinen-/Strömungssimulation; ANSYS Fluent; Englisch fließend", "link": "https://jobs.gecareers.com/vernova/global/en/search.html?keywords=CFD+simulation+engineer&location=Germany", "quelle": "GE Vernova Careers" },
-  { "title": "NVH-Ingenieur / Akustik-Entwickler (m/w/d)", "company": "AUDI AG", "ort": "Ingolstadt, Deutschland", "land": "Deutschland", "branche": "NVH / Akustik", "remote": "Hybrid", "sprache": "Deutsch", "veroeffentlicht": "aktuell", "alter_tage": 4, "match": 5, "level": "Einsteiger", "anforderungen": "M.Sc. Maschinenbau; Fahrzeugdynamik/NVH/Akustik; Simulationskenntnisse; Direkteinstieg nach Studienabschluss willkommen", "link": "https://www.audi.de/de/brand/de/unternehmen/karriere/stellenangebote.html", "quelle": "Audi Careers" },
-  { "title": "Akustik- und Schwingungsingenieur (m/w/d)", "company": "Müller-BBM GmbH", "ort": "Planegg, Deutschland", "land": "Deutschland", "branche": "NVH / Akustik", "remote": "Hybrid", "sprache": "Deutsch", "veroeffentlicht": "aktuell", "alter_tage": 5, "match": 5, "level": "Einsteiger", "anforderungen": "M.Sc. Maschinenbau/Physik; Akustik, Schwingungsanalyse, NVH; experimentelle Messtechnik; sehr gutes Deutsch", "link": "https://www.muellerbbm.de/karriere/", "quelle": "Müller-BBM Careers" },
-  { "title": "Entwicklungsingenieur NVH-Simulation (m/w/d)", "company": "AVL List GmbH", "ort": "Graz, Österreich", "land": "Österreich", "branche": "NVH / Akustik", "remote": "Hybrid", "sprache": "Deutsch", "veroeffentlicht": "aktuell", "alter_tage": 3, "match": 5, "level": "Einsteiger", "anforderungen": "M.Sc. Maschinenbau; Fahrzeugdynamik/NVH-Simulation; FEM/MBS; Direkteinstieg; Englisch willkommen", "link": "https://www.avl.com/de/career", "quelle": "AVL Careers" },
-  { "title": "Versuchsingenieur Optische Messtechnik (m/w/d)", "company": "Polytec GmbH", "ort": "Waldbronn, Deutschland", "land": "Deutschland", "branche": "Messtechnik", "remote": "Hybrid", "sprache": "Deutsch", "veroeffentlicht": "aktuell", "alter_tage": 6, "match": 5, "level": "Einsteiger", "anforderungen": "M.Sc. Maschinenbau/Physik; optische Messtechnik (Laser, Vibrometrie, Schlieren); Bildverarbeitung (passt zu Schlieren-Thesis + ISTM-Forschung)", "link": "https://www.polytec.com/de/karriere/", "quelle": "Polytec Careers" },
-  { "title": "Measurement & Test Engineer (m/f/d) – Fluid & Thermal", "company": "Hottinger Brüel & Kjær (HBK)", "ort": "Darmstadt, Deutschland", "land": "Deutschland", "branche": "Messtechnik", "remote": "Hybrid", "sprache": "Englisch", "veroeffentlicht": "aktuell", "alter_tage": 7, "match": 4, "level": "Einsteiger", "anforderungen": "M.Sc. Maschinenbau/Physik; Messtechnik; Signalverarbeitung; experimentelle Methodik; Englisch fließend", "link": "https://www.hbkworld.com/de/karriere", "quelle": "HBK Careers" },
-  { "title": "Ingenieur Konstruktion & Aerodynamik Segelflugzeug (m/w/d)", "company": "Schempp-Hirth Flugzeugbau GmbH", "ort": "Kirchheim unter Teck, Deutschland", "land": "Deutschland", "branche": "Luft- & Raumfahrt", "remote": "Onsite", "sprache": "Deutsch", "veroeffentlicht": "aktuell", "alter_tage": 8, "match": 5, "level": "Einsteiger", "anforderungen": "M.Sc. Maschinenbau/Luft- und Raumfahrt; Aerodynamik; Konstruktion CATIA/Creo; Segelflugzeugbau oder Pilotenerfahrung sehr willkommen (Akaflieg-Profil passt ideal)", "link": "https://www.schempp-hirth.com/de/unternehmen/stellenangebote/", "quelle": "Schempp-Hirth Careers" },
+  { "title": "NVH-Ingenieur / Akustik-Entwickler (m/w/d)", "company": "AUDI AG", "ort": "Ingolstadt, Deutschland", "land": "Deutschland", "branche": "NVH / Akustik", "remote": "Hybrid", "sprache": "Deutsch", "veroeffentlicht": "aktuell", "alter_tage": 4, "match": 5, "level": "Einsteiger", "anforderungen": "M.Sc. Maschinenbau; Fahrzeugdynamik/NVH/Akustik; Simulationskenntnisse; Direkteinstieg nach Studienabschluss willkommen", "link": "https://www.audi-jobs.com/de/home", "quelle": "Audi Careers" },
+  { "title": "Akustik- und Schwingungsingenieur (m/w/d)", "company": "Müller-BBM GmbH", "ort": "Planegg, Deutschland", "land": "Deutschland", "branche": "NVH / Akustik", "remote": "Hybrid", "sprache": "Deutsch", "veroeffentlicht": "aktuell", "alter_tage": 5, "match": 5, "level": "Einsteiger", "anforderungen": "M.Sc. Maschinenbau/Physik; Akustik, Schwingungsanalyse, NVH; experimentelle Messtechnik; sehr gutes Deutsch", "link": "https://www.mbbm-ind.com/de/karriere/stellenangebote", "quelle": "Müller-BBM Careers" },
+  { "title": "Entwicklungsingenieur NVH-Simulation (m/w/d)", "company": "AVL List GmbH", "ort": "Graz, Österreich", "land": "Österreich", "branche": "NVH / Akustik", "remote": "Hybrid", "sprache": "Deutsch", "veroeffentlicht": "aktuell", "alter_tage": 3, "match": 5, "level": "Einsteiger", "anforderungen": "M.Sc. Maschinenbau; Fahrzeugdynamik/NVH-Simulation; FEM/MBS; Direkteinstieg; Englisch willkommen", "link": "https://www.avl.com/en/career", "quelle": "AVL Careers" },
+  { "title": "Versuchsingenieur Optische Messtechnik (m/w/d)", "company": "Polytec GmbH", "ort": "Waldbronn, Deutschland", "land": "Deutschland", "branche": "Messtechnik", "remote": "Hybrid", "sprache": "Deutsch", "veroeffentlicht": "aktuell", "alter_tage": 6, "match": 5, "level": "Einsteiger", "anforderungen": "M.Sc. Maschinenbau/Physik; optische Messtechnik (Laser, Vibrometrie, Schlieren); Bildverarbeitung (passt zu Schlieren-Thesis + ISTM-Forschung)", "link": "https://www.polytec.com/de/karriere/stellenangebote", "quelle": "Polytec Careers" },
+  { "title": "Measurement & Test Engineer (m/f/d) – Fluid & Thermal", "company": "Hottinger Brüel & Kjær (HBK)", "ort": "Darmstadt, Deutschland", "land": "Deutschland", "branche": "Messtechnik", "remote": "Hybrid", "sprache": "Englisch", "veroeffentlicht": "aktuell", "alter_tage": 7, "match": 4, "level": "Einsteiger", "anforderungen": "M.Sc. Maschinenbau/Physik; Messtechnik; Signalverarbeitung; experimentelle Methodik; Englisch fließend", "link": "https://www.hbkworld.com/en/careers", "quelle": "HBK Careers" },
+  { "title": "Ingenieur Konstruktion & Aerodynamik Segelflugzeug (m/w/d)", "company": "Schempp-Hirth Flugzeugbau GmbH", "ort": "Kirchheim unter Teck, Deutschland", "land": "Deutschland", "branche": "Luft- & Raumfahrt", "remote": "Onsite", "sprache": "Deutsch", "veroeffentlicht": "aktuell", "alter_tage": 8, "match": 5, "level": "Einsteiger", "anforderungen": "M.Sc. Maschinenbau/Luft- und Raumfahrt; Aerodynamik; Konstruktion CATIA/Creo; Segelflugzeugbau oder Pilotenerfahrung sehr willkommen (Akaflieg-Profil passt ideal)", "link": "https://www.schempp-hirth.com/unternehmen/ausbildungsplaetze-und-offene-stellen", "quelle": "Schempp-Hirth Careers" },
   { "title": "Versuchsingenieur (m/w/d) Applikation Sportwagen", "company": "FERCHAU GmbH (Einsatz Automotive)", "ort": "Stuttgart, Deutschland", "land": "Deutschland", "branche": "Automotive", "remote": "Hybrid", "sprache": "Deutsch", "veroeffentlicht": "vor 4 Tagen", "alter_tage": 4, "match": 5, "level": "Einsteiger", "anforderungen": "M.Sc. Maschinenbau/Fahrzeugtechnik; Fahrzeugversuch; Applikation Sportwagen; Messtechnik; Direkteinstieg", "link": "https://www.stepstone.de/stellenangebote--Versuchsingenieur-m-w-d-Applikation-Sportwagen-Stuttgart-FERCHAU-Connecting-People-and-Technologies--10478768-inline.html", "quelle": "StepStone" },
   { "title": "Versuchsingenieur Messtechnik (m/w/d)", "company": "FERCHAU GmbH (Einsatz Automotive)", "ort": "Reutlingen, Deutschland", "land": "Deutschland", "branche": "Messtechnik", "remote": "Hybrid", "sprache": "Deutsch", "veroeffentlicht": "vor 4 Tagen", "alter_tage": 4, "match": 4, "level": "Einsteiger", "anforderungen": "M.Sc. Maschinenbau; Messtechnik; Prüfstandsarbeit; Signalverarbeitung; passt zu ISTM-Versuchserfahrung und Schlieren-Thesis", "link": "https://www.stepstone.de/stellenangebote--Versuchsingenieur-Messtechnik-m-w-d-Reutlingen-FERCHAU-Connecting-People-and-Technologies--7837560-inline.html", "quelle": "StepStone" },
   { "title": "Versuchsingenieur (w/m/d) Gesamtfahrzeugerprobung", "company": "Daimler Buses GmbH", "ort": "Neu-Ulm / Mannheim, Deutschland", "land": "Deutschland", "branche": "Automotive", "remote": "Hybrid", "sprache": "Deutsch", "veroeffentlicht": "vor 1 Woche", "alter_tage": 7, "match": 4, "level": "Einsteiger", "anforderungen": "M.Sc. Maschinenbau/Fahrzeugtechnik; Gesamtfahrzeugerprobung; Messtechnik; Daimler Buses (eCitaro, Setra)", "link": "https://www.stepstone.de/stellenangebote--Versuchsingenieur-w-m-d-Kundenfahrerprobung-und-Gesamtfahrzeugerprobung-am-Standort-Neu-Ulm-oder-Mannheim-Neu-Ulm-Mannheim-Daimler-Buses-GmbH--14200871-inline.html", "quelle": "StepStone" }
@@ -627,7 +694,8 @@ function renderFirmen(data) {
 function renderJobs(data) {
   const tbody = document.getElementById('jobs-body');
   tbody.innerHTML = '';
-  data.forEach(j => {
+  data.forEach((j, displayIdx) => {
+    const actualIdx = jobsData.findIndex(job => job.title === j.title && job.company === j.company);
     const ms = getJobMatch(j);
     const isNew = j.alter_tage <= 3;
     const neu = isNew ? ' <span style="background:#e8f5e9;color:#2e7d32;font-size:0.68rem;font-weight:700;padding:1px 6px;border-radius:10px;">NEU</span>' : '';
@@ -643,7 +711,7 @@ function renderJobs(data) {
       '<td>' + escapeHtml(j.veroeffentlicht) + '</td>' +
       '<td>' + starsHTML(ms) + '</td>' +
       '<td style="max-width:260px;font-size:0.78rem;color:var(--muted);">' + escapeHtml(j.anforderungen) + '</td>' +
-      '<td><a class="apply-btn" href="' + j.link + '" target="_blank">Jetzt bewerben →</a></td>';
+      '<td style="white-space: nowrap;"><button class="btn btn-outline" onclick="openApplicationTips(' + actualIdx + ')" style="padding:4px 10px;font-size:0.75rem;margin-right:4px;">💡 Tipps</button><a class="apply-btn" href="' + j.link + '" target="_blank">Bewerben →</a></td>';
     tbody.appendChild(tr);
   });
   document.getElementById('jobs-no-results').style.display = data.length === 0 ? 'block' : 'none';
@@ -880,6 +948,131 @@ function switchTab(name) {
   });
   if (name === 'tracker') renderTracker();
 }
+
+// ===== BEWERBUNGSTIPPS =====
+let currentTipJobIndex = null;
+const CV_CHECKLISTS = {
+  'Executive': { title: 'Executive Level – Engineering/Leitung', items: [
+    { title: 'Technische Führungserfahrung', tips: 'Welche Teams geleitet? Größe? R&D-Budget? z.B. "Leitung 20+ CFD-Ingenieure, 3 Mio. Budget"' },
+    { title: 'Strategische Projektverantwortung', tips: '5+ strategische Projekte? Transformationen? z.B. "CAE-Strategie für Automotive-Sparte"' },
+    { title: 'Innovationserfolge & Patente', tips: 'Patente eingereicht? Konferenzvortrag? Publikationen? Pensée-Führerschaft?' },
+    { title: 'Branchenexpertise & OEM-Kontakte', tips: 'Automotive? Aerospace? Energie? Konkrete Projektbeispiele mit Unternehmen-Namen.' },
+    { title: 'Digitale Transformation & Tools', tips: 'Cloud-CFD? AI-gestützte Optimierung? Digital Twin? Moderne Methoden?' },
+    { title: 'Internationales Netzwerk', tips: 'Globale Teams? Zusammenarbeit mit internationalen OEMs/Zulieferern?' }
+  ] },
+  'Senior': { title: 'Senior Level – CFD/Simulation Ingenieur', items: [
+    { title: 'Projektverantwortung quantifizieren', tips: '5+ abgeschlossene Projekte mit 2-5 Mio. Budget. On-time/on-budget-Erfolgsrate.' },
+    { title: 'Technische Expertise vertiefen', tips: 'STAR-CCM+, ANSYS, OpenFOAM: Multiphase? Turbulenzen? Wärmeübergang? Validierung?' },
+    { title: 'Problem-Solving mit Impact', tips: '"Thermische Stabilität durch CFD gelöst (20% Gewichtseinsparung)", mit Zahlen.' },
+    { title: 'Publikationen & Zertifikate', tips: 'Konferenzpapier? Fachzertifikat? ASME? Forschungskolaborationen?' },
+    { title: 'Experimentelle Validierung', tips: 'Windkanal? Prüfstand? Messtechnik? Validierst du deine Simulationen?' }
+  ] },
+  'default': { title: 'CV-Optimierung für deine Rolle', items: [
+    { title: 'Anforderungen konkret matchen', tips: 'Keywords aus Ausschreibung in deinen CV: STAR-CCM+, Aerodynamik, Thermodynamik, etc.' },
+    { title: 'Quantifizierte Erfolge', tips: 'Nicht "CFD durchgeführt". Sondern: "Drag 15% reduziert, Simulation mit 5% Fehler validiert"' },
+    { title: 'Branche & Anwendung konkretisieren', tips: 'Welche Komponente/System? Automotive? Flugzeug? Windkraft? Kontext klarmachen.' },
+    { title: 'Technistack auflisten', tips: 'Welche Tools? STAR-CCM+, ANSYS, Tecplot, Python, Meshing-Software? Alle nennen.' },
+    { title: 'Fehlende Skills transparent', tips: 'Neue Software gelernt? Online-Kurs absolviert? Lernbereitschaft positiv darstellen.' },
+    { title: 'Teamwork & Zusammenarbeit', tips: 'Projektteams? Zusammenarbeit mit Experimentalisten/OEMs? Scoping/Anforderungen?' }
+  ] }
+};
+
+function openApplicationTips(jobIndex) {
+  currentTipJobIndex = jobIndex;
+  const job = jobsData[jobIndex];
+  if (!job) return;
+  document.getElementById('tips-job-title').textContent = escapeHtml(job.title);
+  document.getElementById('tips-job-company').textContent = '@ ' + escapeHtml(job.company) + ' · ' + escapeHtml(job.branche);
+  switchTipsTab('cv');
+  renderCVChecklist(jobIndex);
+  document.getElementById('tips-modal').classList.add('active');
+}
+
+function closeTipsModal() {
+  document.getElementById('tips-modal').classList.remove('active');
+  document.getElementById('letter-output').innerHTML = '';
+}
+
+function switchTipsTab(tabName) {
+  document.querySelectorAll('#tips-modal .modal-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('#tips-modal .tab-pane').forEach(t => t.classList.remove('active'));
+  event.target.classList.add('active');
+  document.getElementById('tips-tab-' + tabName).classList.add('active');
+}
+
+function renderCVChecklist(jobIndex) {
+  const job = jobsData[jobIndex];
+  const level = job.level || 'default';
+  const checklist = CV_CHECKLISTS[level] || CV_CHECKLISTS['default'];
+  let html = '<div style="margin-bottom:16px;padding:12px;background:var(--accent);color:#fff;border-radius:6px;font-size:0.85rem;font-weight:600;">' + checklist.title + '</div>';
+  const jobSkills = (job.anforderungen || '').split(';').map(s => s.trim().toLowerCase()).filter(s => s);
+  const profileSkills = (PROFILE.skills || []).map(s => s.toLowerCase());
+  const missingSkills = jobSkills.filter(skill => !profileSkills.some(ps => ps.includes(skill.split(' ')[0]))).slice(0, 5);
+  if (missingSkills.length > 0) {
+    html += '<div class="gap-alert"><strong>🎯 Opportunity:</strong> Diese Skills sind gesucht – hast du sie? Erwähne sie!<br />';
+    missingSkills.forEach(s => { html += '<span class="skills-chip">' + escapeHtml(s.substring(0, 25)) + '</span>'; });
+    html += '</div>';
+  }
+  checklist.items.forEach(item => {
+    html += '<div class="checklist-item"><div class="checklist-checkbox"><input type="checkbox" /></div><div class="checklist-content"><strong>' + escapeHtml(item.title) + '</strong><p>' + escapeHtml(item.tips) + '</p></div></div>';
+  });
+  document.getElementById('cv-checklist').innerHTML = html;
+}
+
+function generateLetterOpening() {
+  const job = jobsData[currentTipJobIndex];
+  const contact = document.getElementById('letter-contact').value;
+  let text = (contact ? 'Sehr geehrte Frau/Herr ' + escapeHtml(contact) : 'Sehr geehrte Damen und Herren') + ',\n\n';
+  text += 'mit großem Interesse bewerbe ich mich auf die Position „' + escapeHtml(job.title) + '". ';
+  text += 'Meine Expertise in ' + PROFILE.skills.slice(0, 3).join(', ') + ' macht mich zur idealen Besetzung.';
+  showLetterOutput(text, 'Eröffnung');
+}
+
+function generateLetterBody() {
+  const job = jobsData[currentTipJobIndex];
+  let text = '\n\nIhre Anforderungen – meine Erfahrung:\n';
+  (job.anforderungen || '').split(';').map(s => s.trim()).slice(0, 3).forEach((req, i) => {
+    text += '\n' + (i + 1) + '. ' + escapeHtml(req) + ': ';
+    const matching = PROFILE.skills.find(s => req.toLowerCase().includes(s.toLowerCase()));
+    text += matching ? 'Nachgewiesene Erfahrung in ' + escapeHtml(matching) + '.' : 'Breite Expertise in diesem Bereich.';
+  });
+  showLetterOutput(text, 'Hauptteil');
+}
+
+function generateLetterClosing() {
+  const name = document.getElementById('letter-name').value || 'Ihr Kandidat';
+  const job = jobsData[currentTipJobIndex];
+  const text = '\n\nIch freue mich auf die Gelegenheit, meine Qualifikationen zu diskutieren und Ihr Team bei dieser innovativen Herausforderung zu unterstützen.\n\nMit freundlichen Grüßen,\n' + escapeHtml(name);
+  showLetterOutput(text, 'Abschluss');
+}
+
+function generateFullLetter() {
+  const job = jobsData[currentTipJobIndex];
+  const name = document.getElementById('letter-name').value || 'Ihr Kandidat';
+  const contact = document.getElementById('letter-contact').value;
+  let text = (contact ? 'Sehr geehrte Frau/Herr ' + escapeHtml(contact) : 'Sehr geehrte Damen und Herren') + ',\n\n';
+  text += 'mit großem Interesse bewerbe ich mich auf die Position „' + escapeHtml(job.title) + '". Meine Expertise passt ideal zu Ihren Anforderungen.\n';
+  text += '\nIhre Anforderungen – meine Erfahrung:\n';
+  (job.anforderungen || '').split(';').map(s => s.trim()).slice(0, 3).forEach((req, i) => {
+    text += '\n' + (i + 1) + '. ' + escapeHtml(req) + ': Breite Expertise und nachgewiesene Erfolge.';
+  });
+  text += '\n\nIch freue mich auf ein Gespräch und den Austausch über die Möglichkeiten.\n\nMit freundlichen Grüßen,\n' + escapeHtml(name);
+  showLetterOutput(text, 'Komplettes Anschreiben');
+}
+
+function showLetterOutput(text, label) {
+  const out = document.getElementById('letter-output');
+  out.innerHTML = '<div style="margin-top:16px;"><strong style="color:var(--primary);font-size:0.9rem;">📄 ' + label + ':</strong><div class="generator-output">' + escapeHtml(text) + '</div><button class="generator-btn" onclick="copyToClipboard()" style="margin-top:10px;background:var(--green);">📋 In Zwischenablage</button></div>';
+}
+
+function copyToClipboard() {
+  const elem = document.querySelector('.generator-output');
+  if (elem && navigator.clipboard) {
+    navigator.clipboard.writeText(elem.textContent).then(() => alert('✓ Anschreiben kopiert!'));
+  }
+}
+
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeTipsModal(); });
 
 // ===== SORTIERUNG =====
 function sortTable(tableId, col) {

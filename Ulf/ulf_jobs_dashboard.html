@@ -41,7 +41,7 @@
   .tab.active { color: var(--primary); border-bottom-color: var(--accent); }
 
   /* CONTAINER */
-  .container { padding: 24px 28px; max-width: 1400px; }
+  .container { padding: 24px 28px; max-width: 1800px; }
   .tab-content { display: none; }
   .tab-content.active { display: block; }
 
@@ -136,6 +136,38 @@
   .tooltip { position: relative; cursor: help; }
   .tooltip::after { content: attr(data-tip); position: absolute; bottom: 120%; left: 50%; transform: translateX(-50%); background: #333; color: #fff; padding: 5px 9px; border-radius: 5px; font-size: 0.72rem; white-space: nowrap; pointer-events: none; opacity: 0; transition: opacity .2s; z-index: 10; }
   .tooltip:hover::after { opacity: 1; }
+
+  /* MODAL */
+  .modal-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 100; justify-content: center; align-items: center; }
+  .modal-overlay.active { display: flex; }
+  .modal-content { background: #fff; border-radius: 12px; width: 90%; max-width: 900px; max-height: 85vh; overflow-y: auto; box-shadow: 0 10px 50px rgba(0,0,0,0.3); }
+  .modal-header { background: var(--primary); color: #fff; padding: 18px 24px; display: flex; justify-content: space-between; align-items: center; border-radius: 12px 12px 0 0; }
+  .modal-header h2 { margin: 0; font-size: 1.2rem; font-weight: 700; }
+  .modal-close { background: none; border: none; color: #fff; font-size: 1.5rem; cursor: pointer; padding: 0; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; }
+  .modal-close:hover { opacity: 0.75; }
+  .modal-tabs { display: flex; border-bottom: 2px solid var(--border); padding: 0 24px; background: #f9f9f9; }
+  .modal-tab { padding: 14px 20px; cursor: pointer; font-weight: 600; color: var(--muted); border-bottom: 3px solid transparent; margin-bottom: -2px; transition: all .2s; font-size: 0.9rem; background: none; border: none; }
+  .modal-tab:hover { color: var(--primary); }
+  .modal-tab.active { color: var(--primary); border-bottom-color: var(--accent); }
+  .modal-body { padding: 24px; }
+  .tab-pane { display: none; }
+  .tab-pane.active { display: block; }
+  .checklist-item { display: flex; gap: 12px; margin-bottom: 14px; padding: 12px; background: #f9f9f9; border-left: 3px solid var(--accent2); border-radius: 5px; }
+  .checklist-checkbox { display: flex; align-items: flex-start; margin-top: 2px; }
+  .checklist-checkbox input { width: 18px; height: 18px; cursor: pointer; accent-color: var(--accent); }
+  .checklist-content { flex: 1; }
+  .checklist-content strong { display: block; font-size: 0.9rem; color: var(--text); margin-bottom: 3px; }
+  .checklist-content p { font-size: 0.82rem; color: var(--muted); margin: 0; line-height: 1.5; }
+  .generator-section { margin-bottom: 18px; }
+  .generator-section label { display: block; font-weight: 700; color: var(--text); font-size: 0.85rem; margin-bottom: 8px; text-transform: uppercase; }
+  .generator-section input, .generator-section textarea { width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 0.85rem; font-family: inherit; }
+  .generator-section textarea { min-height: 80px; resize: vertical; }
+  .generator-section input:focus, .generator-section textarea:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 3px rgba(232,119,34,0.2); }
+  .generator-btn { padding: 8px 16px; background: var(--accent); color: #fff; border: none; border-radius: 6px; cursor: pointer; font-size: 0.85rem; font-weight: 600; transition: opacity .2s; }
+  .generator-btn:hover { opacity: 0.85; }
+  .generator-output { background: #f0f8ff; border: 1px solid #cce5ff; border-radius: 6px; padding: 14px; margin-top: 12px; font-size: 0.84rem; line-height: 1.6; color: var(--text); font-family: 'Courier New', monospace; white-space: pre-wrap; word-wrap: break-word; }
+  .skills-chip { display: inline-block; background: var(--accent2); color: #fff; padding: 3px 10px; border-radius: 14px; font-size: 0.72rem; font-weight: 600; margin: 3px 4px 3px 0; }
+  .gap-alert { background: #fff3cd; border: 1px solid #ffc107; border-radius: 6px; padding: 12px; margin-bottom: 14px; font-size: 0.84rem; color: #856404; }
 </style>
 </head>
 <body>
@@ -379,6 +411,41 @@
 
 </div><!-- /container -->
 
+<!-- MODAL: BEWERBUNGSTIPPS -->
+<div id="tips-modal" class="modal-overlay">
+  <div class="modal-content">
+    <div class="modal-header">
+      <div>
+        <h2>💡 Bewerbungstipps für <span id="tips-job-title"></span></h2>
+        <p style="margin: 2px 0 0 0; font-size: 0.85rem; opacity: 0.85;" id="tips-job-company"></p>
+      </div>
+      <button class="modal-close" onclick="closeTipsModal()">✕</button>
+    </div>
+    <div class="modal-tabs">
+      <button class="modal-tab active" onclick="switchTipsTab('cv')">📋 CV-Optimierung</button>
+      <button class="modal-tab" onclick="switchTipsTab('letter')">✍️ Anschreiben-Generator</button>
+    </div>
+    <div class="modal-body">
+      <!-- TAB: CV-OPTIMIERUNG -->
+      <div id="tips-tab-cv" class="tab-pane active">
+        <h3 style="font-size: 0.95rem; font-weight: 700; color: var(--primary); margin-bottom: 12px;">Ihre Chancen verbessern – Checkliste für diese Stelle:</h3>
+        <div id="cv-checklist"></div>
+      </div>
+      <!-- TAB: ANSCHREIBEN-GENERATOR -->
+      <div id="tips-tab-letter" class="tab-pane">
+        <h3 style="font-size: 0.95rem; font-weight: 700; color: var(--primary); margin-bottom: 12px;">Motivationsschreiben-Generator</h3>
+        <p style="font-size: 0.84rem; color: var(--muted); margin-bottom: 16px;">Der Generator verbindet Ihre Skills mit den Anforderungen der Stelle. Nutzen Sie die Vorschläge als Bausteine für Ihr Anschreiben.</p>
+        <div class="generator-section"><label>Ihr Name</label><input type="text" id="letter-name" placeholder="Max Mustermann"></div>
+        <div class="generator-section"><label>Ansprechperson (optional)</label><input type="text" id="letter-contact" placeholder="z.B. Frau Schmidt"></div>
+        <div class="generator-section"><label>Ihre Key-Skills für diese Rolle</label><textarea id="letter-skills" placeholder="Cloud-Expertise, ITIL, Führungserfahrung..."></textarea></div>
+        <div class="generator-section"><label>Warum interessiert Sie diese Stelle?</label><textarea id="letter-motivation" placeholder="z.B. Die Transformation in der Finanzwirtschaft..."></textarea></div>
+        <div style="display: flex; gap: 8px; flex-wrap: wrap;"><button class="generator-btn" onclick="generateLetterOpening()">📝 Eröffnung</button><button class="generator-btn" onclick="generateLetterBody()">💼 Hauptteil</button><button class="generator-btn" onclick="generateLetterClosing()">✋ Abschluss</button><button class="generator-btn" style="background: var(--green);" onclick="generateFullLetter()">🚀 Komplett</button></div>
+        <div id="letter-output"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
 // ===== DATA: CANDIDATE-SPECIFIC (auto-generated - do not edit manually) =====
 const PROFILE = {
@@ -433,24 +500,24 @@ const firmenData = [
 ]
 ;
 const jobsData = [
-  { "title": "CIO / Bereichsleiter IT (m/w/d)", "company": "Generali Deutschland Holding AG", "ort": "München, Deutschland", "land": "Deutschland", "branche": "Finanzwirtschaft", "remote": "Hybrid", "sprache": "Deutsch", "veroeffentlicht": "vor 3 Tagen", "alter_tage": 3, "match": null, "level": "Executive", "anforderungen": "Führungserfahrung >10 Jahre IT; Budget-Verantwortung; BaFin/DORA; Versicherungs-IT; Cloud-Strategie; IT-Security; ITIL; Stakeholder-Management", "link": "https://www.generali.de/karriere/", "quelle": "Generali Careers" },
-  { "title": "Director IT Service Management (m/w/d)", "company": "NTT DATA Germany GmbH", "ort": "Frankfurt am Main, Deutschland", "land": "Deutschland", "branche": "IT & Technologie", "remote": "Hybrid", "sprache": "Deutsch", "veroeffentlicht": "vor 2 Tagen", "alter_tage": 2, "match": null, "level": "Executive", "anforderungen": "ITIL 4 Expert; IT Service Delivery; Kundenmanagement; Transformation; Cloud; Managed Services; P&L-Verantwortung; Englisch fließend", "link": "https://de.nttdata.com/karriere/", "quelle": "NTT DATA Careers" },
-  { "title": "Program Manager IT Transformation (m/w/d)", "company": "T-Systems International GmbH", "ort": "Bonn / Frankfurt, Deutschland", "land": "Deutschland", "branche": "IT & Technologie", "remote": "Hybrid", "sprache": "Deutsch", "veroeffentlicht": "vor 4 Tagen", "alter_tage": 4, "match": null, "level": "Executive", "anforderungen": "10+ J. IT-Transition/Transformation; Outsourcing; Service Management; ITIL; Großkunden; Budget >20 Mio. €; Englisch fließend", "link": "https://www.t-systems.com/de/karriere", "quelle": "T-Systems Careers" },
-  { "title": "Managing Consultant – IT Strategy & Transformation (m/w/d)", "company": "Capgemini Deutschland GmbH", "ort": "Frankfurt / München / Hamburg, Deutschland", "land": "Deutschland", "branche": "Beratung & Consulting", "remote": "Hybrid", "sprache": "Deutsch", "veroeffentlicht": "vor 1 Tag", "alter_tage": 1, "match": null, "level": "Executive", "anforderungen": "Senior IT Consulting; Digital Transformation; Cloud; IT-Strategie; Kundengewinnung; Führungserfahrung; SAP; ITIL; Englisch fließend", "link": "https://www.capgemini.com/de-de/karriere/", "quelle": "Capgemini Careers" },
-  { "title": "Head of IT Operations (m/w/d)", "company": "Sopra Steria SE", "ort": "Hamburg / Berlin, Deutschland", "land": "Deutschland", "branche": "Beratung & Consulting", "remote": "Hybrid", "sprache": "Deutsch", "veroeffentlicht": "vor 5 Tagen", "alter_tage": 5, "match": null, "level": "Executive", "anforderungen": "IT-Operations-Führung; Managed Services; ITIL 4 MP; Cloud; ISO 27001; Öffentlicher Sektor Erfahrung; Budget-Verantwortung", "link": "https://www.soprasteria.de/karriere", "quelle": "Sopra Steria Careers" },
-  { "title": "VP IT Transformation – Banking (m/w/d)", "company": "Deutsche Bank AG", "ort": "Frankfurt am Main, Deutschland", "land": "Deutschland", "branche": "Finanzwirtschaft", "remote": "Hybrid", "sprache": "Englisch", "veroeffentlicht": "vor 6 Tagen", "alter_tage": 6, "match": null, "level": "Executive", "anforderungen": "IT-Transformation Banking; Cloud Migration; BaFin; DORA; Regulatorik; Führung großer Teams; Englisch fließend; Stakeholder Board-Level", "link": "https://careers.db.com/", "quelle": "Deutsche Bank Careers" },
-  { "title": "Bereichsleiter IT (m/w/d) – Öffentlicher Dienst", "company": "Dataport AöR", "ort": "Hamburg / Kiel / Hannover, Deutschland", "land": "Deutschland", "branche": "Öffentlicher Dienst", "remote": "Hybrid", "sprache": "Deutsch", "veroeffentlicht": "vor 3 Tagen", "alter_tage": 3, "match": null, "level": "Executive", "anforderungen": "IT-Führung öffentlicher Sektor; IT-Operations; Cloud; Service Management; ITIL; Digitalisierungsprogramme; BSI-Grundschutz", "link": "https://www.dataport.de/karriere/", "quelle": "Dataport Careers" },
-  { "title": "Senior IT Manager – Cloud Operations (m/w/d)", "company": "IBM Deutschland GmbH", "ort": "Frankfurt / München, Deutschland", "land": "Deutschland", "branche": "IT & Technologie", "remote": "Hybrid", "sprache": "Englisch", "veroeffentlicht": "vor 7 Tagen", "alter_tage": 7, "match": null, "level": "Executive", "anforderungen": "Cloud Operations Management; Azure/AWS; ITIL; IT-Service Delivery; Outsourcing; Großkundenverantwortung; Englisch fließend", "link": "https://www.ibm.com/de-de/employment/", "quelle": "IBM Careers" },
-  { "title": "CISO / IT-Sicherheitsbeauftragter (m/w/d)", "company": "R+V Versicherung AG", "ort": "Wiesbaden, Deutschland", "land": "Deutschland", "branche": "Finanzwirtschaft", "remote": "Hybrid", "sprache": "Deutsch", "veroeffentlicht": "vor 2 Tagen", "alter_tage": 2, "match": null, "level": "Executive", "anforderungen": "IT-Security Führung; ISO 27001; BSI-Grundschutz; DORA; BaFin; Cyber Incident Management; Versicherungsumfeld; ITIL-Kenntnisse", "link": "https://karriere.ruv.de/", "quelle": "R+V Careers" },
-  { "title": "IT-Leiter / CIO (m/w/d) – Mittelständisches Technologieunternehmen", "company": "Heidrick & Struggles (Vermittlung)", "ort": "Raum Frankfurt / Rhein-Main, Deutschland", "land": "Deutschland", "branche": "Industrie", "remote": "Hybrid", "sprache": "Deutsch", "veroeffentlicht": "vor 5 Tagen", "alter_tage": 5, "match": null, "level": "Executive", "anforderungen": "CIO-Erfahrung; Budget 10–50 Mio. €; Cloud-Transformation; SAP; IT-Strategie; Führung 50–300 MA; Digitalisierung", "link": "https://www.heidrick.com/en/services/executive-search", "quelle": "Executive Search" },
-  { "title": "IT-Projektleiter Digital Transformation (m/w/d)", "company": "KPMG Deutschland", "ort": "Berlin / Frankfurt, Deutschland", "land": "Deutschland", "branche": "Beratung & Consulting", "remote": "Hybrid", "sprache": "Deutsch", "veroeffentlicht": "vor 4 Tagen", "alter_tage": 4, "match": null, "level": "Senior", "anforderungen": "IT-Projektmanagement; Digital Transformation; Compliance; ISO 27001; BSI; ITIL; Kundenpräsentationen; PMP oder PRINCE2", "link": "https://home.kpmg/de/de/home/careers.html", "quelle": "KPMG Careers" },
-  { "title": "IT-Leiter Banken & Versicherungen (m/w/d)", "company": "msg Group", "ort": "Frankfurt / München, Deutschland", "land": "Deutschland", "branche": "Beratung & Consulting", "remote": "Hybrid", "sprache": "Deutsch", "veroeffentlicht": "vor 1 Tag", "alter_tage": 1, "match": null, "level": "Executive", "anforderungen": "IT-Management Finanzwirtschaft; BaFin; DORA; SAP; ITIL; Managed Services; Kundenverantwortung; Führungserfahrung", "link": "https://www.msg.group/karriere", "quelle": "msg Careers" },
-  { "title": "Head of Digital Transformation (m/w/d)", "company": "Accenture GmbH", "ort": "München / Frankfurt, Deutschland", "land": "Deutschland", "branche": "Beratung & Consulting", "remote": "Hybrid", "sprache": "Englisch", "veroeffentlicht": "vor 3 Tagen", "alter_tage": 3, "match": null, "level": "Executive", "anforderungen": "Digital Transformation Führung; Cloud; AI/KI; IT-Strategie; C-Level Consulting; Neugeschäft; Englisch fließend; Führungserfahrung >10 Jahre", "link": "https://www.accenture.com/de-de/careers", "quelle": "Accenture Careers" },
-  { "title": "KI-Beauftragter / Head of AI (m/w/d)", "company": "Mittelständisches Unternehmen via Kienbaum", "ort": "Bundesweit / Remote, Deutschland", "land": "Deutschland", "branche": "IT & Technologie", "remote": "Remote", "sprache": "Deutsch", "veroeffentlicht": "vor 2 Tagen", "alter_tage": 2, "match": null, "level": "Executive", "anforderungen": "KI-Strategie und -Umsetzung; Wissensmanagement; AIOps; Digitalisierung; DEKRA-Zertifikat oder vergleichbar; Führungserfahrung; AI-Governance", "link": "https://www.kienbaum.com/de/", "quelle": "Executive Search" },
-  { "title": "VP Customer Success & Service Management (m/w/d)", "company": "CGI Deutschland GmbH", "ort": "Berlin / Frankfurt, Deutschland", "land": "Deutschland", "branche": "IT & Technologie", "remote": "Hybrid", "sprache": "Deutsch", "veroeffentlicht": "vor 6 Tagen", "alter_tage": 6, "match": null, "level": "Executive", "anforderungen": "IT Service Management; ITIL 4 MP; Kundenverantwortung; Umsatz >30 Mio. €; Transition; Cloud; Outsourcing; Krisenmanagement", "link": "https://www.cgi.com/de/de/careers", "quelle": "CGI Careers" },
-  { "title": "Abteilungsleiter IT-Infrastruktur & Cloud (m/w/d)", "company": "Allianz SE", "ort": "München, Deutschland", "land": "Deutschland", "branche": "Finanzwirtschaft", "remote": "Hybrid", "sprache": "Deutsch", "veroeffentlicht": "vor 5 Tagen", "alter_tage": 5, "match": null, "level": "Executive", "anforderungen": "IT-Infrastruktur-Führung; Cloud (Azure/AWS); DORA; BaFin; IT-Security; ITIL; Budget-Verantwortung; Führung 50+ MA", "link": "https://careers.allianz.com/", "quelle": "Allianz Careers" },
-  { "title": "Senior IT Consultant – DORA / Regulatorik (m/w/d)", "company": "Deloitte Deutschland", "ort": "Frankfurt / Hamburg, Deutschland", "land": "Deutschland", "branche": "Beratung & Consulting", "remote": "Hybrid", "sprache": "Deutsch", "veroeffentlicht": "vor 1 Tag", "alter_tage": 1, "match": null, "level": "Senior", "anforderungen": "DORA-Implementierung; BaFin; ISO 27001; IT-Risikomanagement; Banken/Versicherungen; ITIL; Beratungserfahrung", "link": "https://www.deloitte.com/de/de/careers.html", "quelle": "Deloitte Careers" },
-  { "title": "IT-Leiter / Head of IT – Gesundheitswesen (m/w/d)", "company": "BARMER Krankenkasse", "ort": "Wuppertal / Remote, Deutschland", "land": "Deutschland", "branche": "Gesundheitswesen", "remote": "Hybrid", "sprache": "Deutsch", "veroeffentlicht": "vor 7 Tagen", "alter_tage": 7, "match": null, "level": "Executive", "anforderungen": "IT-Führung Gesundheitswesen; IT-Security; BSI; Digitalisierung; Cloud; Budget 15 Mio. €; ITIL; Compliance (GKV)", "link": "https://www.barmer.de/unternehmen/karriere", "quelle": "BARMER Careers" }
+  { "title": "Chief Information Officer (CIO) (all genders)", "company": "SEEBURGER AG", "ort": "Bretten, Deutschland", "land": "Deutschland", "branche": "IT & Technologie", "remote": "nicht angegeben", "sprache": "Deutsch", "veroeffentlicht": "vor 3 Tagen", "alter_tage": 3, "match": null, "level": "Executive", "anforderungen": "CIO-Rolle; globales B2B-Software-Unternehmen (~14.000 Kunden, 15 Länder); strategische IT-Führung; Cloud; Digitalisierung; nahe Heidelberg (~50 km)", "link": "https://de.indeed.com/viewjob?jk=27e1429e5935c65f", "quelle": "Indeed" },
+  { "title": "Leitung Informationstechnologie (m/w/d)", "company": "Geuder AG", "ort": "Heidelberg, Deutschland", "land": "Deutschland", "branche": "Medizintechnik", "remote": "Hybrid", "sprache": "Deutsch", "veroeffentlicht": "vor 2 Tagen", "alter_tage": 2, "match": null, "level": "Executive", "anforderungen": "IT-Führung; IT- und Infrastrukturprojekte; Koordination mit Head of Digital Transformation; Medizintechnikunternehmen; direkt in Heidelberg", "link": "https://de.indeed.com/viewjob?jk=7b591a5a9421d32f", "quelle": "Indeed" },
+  { "title": "Head of Regional Operations (f/m/d)", "company": "Heidelberg Materials", "ort": "Heidelberg, Deutschland", "land": "Deutschland", "branche": "Industrie", "remote": "Hybrid", "sprache": "Englisch", "veroeffentlicht": "vor 5 Tagen", "alter_tage": 5, "match": null, "level": "Executive", "anforderungen": "Gesamtverantwortung lokale IT-Operations Europa/AMWA/APAC; Accountability; Cloud; DAX-Konzern; Jobticket; Fahrrad-Leasing; direkt in Heidelberg", "link": "https://de.indeed.com/viewjob?jk=b2c32170ad8cb46c", "quelle": "Indeed" },
+  { "title": "Head of IT (m/w/d)", "company": "Phorms Education SE", "ort": "Berlin, Deutschland", "land": "Deutschland", "branche": "Bildung", "remote": "Hybrid", "sprache": "Deutsch", "veroeffentlicht": "vor 4 Tagen", "alter_tage": 4, "match": null, "level": "Executive", "anforderungen": "Gruppenweite IT-Führung; Team 8 MA + Standort-IT; Cloud; Workplace; IT-Security; Compliance; ITSM; Berichtslinie direkt Geschäftsführung; unbefristet Vollzeit", "link": "https://de.indeed.com/viewjob?jk=fa64f3d78396b2d6", "quelle": "Indeed" },
+  { "title": "Head of Global IT Transformation & Program Management (m/w/d)", "company": "JUMO GmbH & Co. KG", "ort": "Fulda, Deutschland", "land": "Deutschland", "branche": "Industrie", "remote": "Hybrid", "sprache": "Deutsch", "veroeffentlicht": "vor 6 Tagen", "alter_tage": 6, "match": null, "level": "Executive", "anforderungen": "Globale IT-Transformation; Programmmanagement; Team-Aufbau; Umsatz >300 Mio. €; Aufstiegsmöglichkeiten; Homeoffice-Möglichkeit", "link": "https://de.indeed.com/viewjob?jk=d6d794594d5bd1ff", "quelle": "Indeed" },
+  { "title": "CIO | Handel, B2C, SAP, IT-Infrastruktur (m/w/d)", "company": "Unternehmen via Vesterling AG (Executive Search)", "ort": "Hamburg, Deutschland", "land": "Deutschland", "branche": "Handel", "remote": "nicht angegeben", "sprache": "Deutsch", "veroeffentlicht": "vor 6 Tagen", "alter_tage": 6, "match": null, "level": "Executive", "anforderungen": "CIO; SAP; IT-Infrastruktur; Führung ca. 500 Mitarbeiter; B2C-Handel; Executive-Search-Vermittlung", "link": "https://www.xing.com/jobs/hamburg-cio-handel-b2c-fuehrung-ca-500-mitarbeitern-sap-it-infrastruktur-mwd-156056116", "quelle": "XING" },
+  { "title": "IT-Leiter (m/w/d)", "company": "KARRIEREMACHER GmbH", "ort": "München, Deutschland", "land": "Deutschland", "branche": "IT & Technologie", "remote": "Hybrid", "sprache": "Deutsch", "veroeffentlicht": "vor 4 Tagen", "alter_tage": 4, "match": null, "level": "Executive", "anforderungen": "IT-Führung; Cloud-Transformation; KI-Integration; digitale Zukunftsfähigkeit aktiv vorantreiben; flexible Arbeitszeiten", "link": "https://de.indeed.com/viewjob?jk=8cb1878c099e8f93", "quelle": "Indeed" },
+  { "title": "Director IT (m/w/d) Strategie und Transformation", "company": "TechMinds GmbH", "ort": "Hamburg, Deutschland", "land": "Deutschland", "branche": "IT & Technologie", "remote": "Hybrid", "sprache": "Deutsch", "veroeffentlicht": "vor 5 Tagen", "alter_tage": 5, "match": null, "level": "Executive", "anforderungen": "IT-Strategie; Digitale Transformation; Director-Level; dringend gesucht", "link": "https://www.xing.com/jobs/hamburg-director-it-strategie-transformation-155330655", "quelle": "XING" },
+  { "title": "Leiter IT / CIO (m/w/d)", "company": "Stadtwerke Rheine GmbH", "ort": "Rheine, Deutschland", "land": "Deutschland", "branche": "Energie / Versorgung", "remote": "nicht angegeben", "sprache": "Deutsch", "veroeffentlicht": "vor 7 Tagen", "alter_tage": 7, "match": null, "level": "Executive", "anforderungen": "IT-Führung Versorgungsunternehmen; First-/Second-/Third-Level-Support; strategische Zusammenarbeit Geschäftsführung; Weiterbildungsprogramme", "link": "https://de.indeed.com/viewjob?jk=1b4a1dcc77d4a701", "quelle": "Indeed" },
+  { "title": "Leiter*in IT Security / CISO (m/w/d)", "company": "Transdev GmbH", "ort": "Berlin, Deutschland", "land": "Deutschland", "branche": "Transport & Mobilität", "remote": "Hybrid", "sprache": "Deutsch", "veroeffentlicht": "vor 1 Tag", "alter_tage": 1, "match": null, "level": "Executive", "anforderungen": "CISO Konzernebene; ISO 27001; BSI IT-Grundschutz; KRITIS; NIS2; Security-Governance; Führung Security-Team; ~9.000 MA; gestern veröffentlicht", "link": "https://de.indeed.com/viewjob?jk=22f024b761bbd562", "quelle": "Indeed" },
+  { "title": "Senior Director Global Cyber Security / CISO (m/w/d)", "company": "PHOENIX CONTACT Deutschland GmbH", "ort": "Blomberg, Deutschland", "land": "Deutschland", "branche": "Industrie / Elektrotechnik", "remote": "Hybrid", "sprache": "Deutsch", "veroeffentlicht": "vor 5 Tagen", "alter_tage": 5, "match": null, "level": "Executive", "anforderungen": "Gruppenweite Cyber-Security-Strategie; CISO auf Konzernebene; ISO 27001; globales Security-Team; Betriebliche Altersvorsorge; Homeoffice-Möglichkeit", "link": "https://de.indeed.com/viewjob?jk=fab8964b1f454834", "quelle": "Indeed" },
+  { "title": "Head of App & Cloud Transformation Advisory (m/w/d)", "company": "Atos SE", "ort": "Deutschland (bundesweit)", "land": "Deutschland", "branche": "IT & Technologie", "remote": "Remote / Hybrid", "sprache": "Deutsch", "veroeffentlicht": "vor 4 Tagen", "alter_tage": 4, "match": null, "level": "Executive", "anforderungen": "Cloud-Transformation; App-Modernisierung; Advisory-Führung; bundesweit / Remote", "link": "https://www.xing.com/jobs/deutschland-head-of-app-cloud-transformation-advisory-156140984", "quelle": "XING" },
+  { "title": "IT Transformation Manager Defense (w/m/d)", "company": "Capgemini Sogeti", "ort": "Berlin, Deutschland", "land": "Deutschland", "branche": "Beratung & Consulting", "remote": "Hybrid", "sprache": "Deutsch", "veroeffentlicht": "vor 3 Tagen", "alter_tage": 3, "match": null, "level": "Senior", "anforderungen": "IT-Transformation Verteidigung/öffentlicher Sektor; Analyse IT-/Organisationsstrukturen; Transformationsstrategien entwickeln; Vollzeit/Teilzeit; Weiterbildung", "link": "https://de.indeed.com/viewjob?jk=9a2e74973bfc6729", "quelle": "Indeed" },
+  { "title": "CIO mit starkem Retail Footprint (m/w/d)", "company": "Unternehmen via dr. Fuchs Personalberatung (Executive Search)", "ort": "Nürnberg, Deutschland", "land": "Deutschland", "branche": "Handel", "remote": "nicht angegeben", "sprache": "Deutsch", "veroeffentlicht": "vor 4 Tagen", "alter_tage": 4, "match": null, "level": "Executive", "anforderungen": "CIO mit Retail-Erfahrung; Executive-Search-Vermittlung; vor 4 Tagen veröffentlicht", "link": "https://www.xing.com/jobs/nuernberg-cio-starkem-retail-footprint-156140949", "quelle": "XING" },
+  { "title": "Global Head of IT & Digitalization (m/w/d)", "company": "Kulzer GmbH", "ort": "Hanau, Deutschland", "land": "Deutschland", "branche": "Industrie / Dentalbranche", "remote": "nicht angegeben", "sprache": "Deutsch", "veroeffentlicht": "vor 8 Tagen", "alter_tage": 8, "match": null, "level": "Executive", "anforderungen": "Globale IT-Führung; Digitalisierung; internationales Industrieunternehmen (Dental)", "link": "https://www.xing.com/jobs/hanau-global-head-of-it-digitalization-154773051", "quelle": "XING" },
+  { "title": "Bereichsleitung IT (m/w/d)", "company": "Hahn-Schickard gGmbH", "ort": "Freiburg, Deutschland", "land": "Deutschland", "branche": "Forschung & Technologie", "remote": "Hybrid", "sprache": "Deutsch", "veroeffentlicht": "vor 6 Tagen", "alter_tage": 6, "match": null, "level": "Executive", "anforderungen": "IT-Bereichsleitung; Abstimmung mit CIO und Geschäftsführung; Institutskoordination; flexible Arbeitszeiten; Fahrrad-Leasing", "link": "https://de.indeed.com/viewjob?jk=c83c3b819540105a", "quelle": "Indeed" },
+  { "title": "Chief Information Security Officer (m/w/d)", "company": "Interzero Europe GmbH", "ort": "Köln, Deutschland", "land": "Deutschland", "branche": "Industrie / Kreislaufwirtschaft", "remote": "nicht angegeben", "sprache": "Deutsch", "veroeffentlicht": "vor 9 Tagen", "alter_tage": 9, "match": null, "level": "Executive", "anforderungen": "CISO; IT-Security Führung; europäischer Recycling-/Kreislaufwirtschaftskonzern; Köln", "link": "https://www.xing.com/jobs/koeln-chief-information-security-officer-155274297", "quelle": "XING" },
+  { "title": "Head of IT Germany (m/w/d)", "company": "Yum! Restaurants International (KFC)", "ort": "Ratingen, Deutschland", "land": "Deutschland", "branche": "Gastronomie / Handel", "remote": "nicht angegeben", "sprache": "Deutsch", "veroeffentlicht": "vor 2 Tagen", "alter_tage": 2, "match": null, "level": "Executive", "anforderungen": "IT-, Digital- und AI-Roadmap für KFC Deutschland; internationaler Konzern; Gesamtverantwortung für Deutschland-IT; Schnellbewerbung möglich", "link": "https://de.indeed.com/viewjob?jk=891ab82464c02f56", "quelle": "Indeed" }
 ]
 ;
 const linkedinQueries = [
@@ -615,7 +682,8 @@ function renderFirmen(data) {
 function renderJobs(data) {
   const tbody = document.getElementById('jobs-body');
   tbody.innerHTML = '';
-  data.forEach(j => {
+  data.forEach((j, displayIdx) => {
+    const actualIdx = jobsData.findIndex(job => job.title === j.title && job.company === j.company);
     const ms = getJobMatch(j);
     const isNew = j.alter_tage <= 3;
     const neu = isNew ? ' <span style="background:#e8f5e9;color:#2e7d32;font-size:0.68rem;font-weight:700;padding:1px 6px;border-radius:10px;">NEU</span>' : '';
@@ -631,7 +699,7 @@ function renderJobs(data) {
       '<td>' + escapeHtml(j.veroeffentlicht) + '</td>' +
       '<td>' + starsHTML(ms) + '</td>' +
       '<td style="max-width:260px;font-size:0.78rem;color:var(--muted);">' + escapeHtml(j.anforderungen) + '</td>' +
-      '<td><a class="apply-btn" href="' + j.link + '" target="_blank">Jetzt bewerben →</a></td>';
+      '<td style="white-space: nowrap;"><button class="btn btn-outline" onclick="openApplicationTips(' + actualIdx + ')" style="padding:4px 10px;font-size:0.75rem;margin-right:4px;">💡 Tipps</button><a class="apply-btn" href="' + j.link + '" target="_blank">Bewerben →</a></td>';
     tbody.appendChild(tr);
   });
   document.getElementById('jobs-no-results').style.display = data.length === 0 ? 'block' : 'none';
@@ -868,6 +936,131 @@ function switchTab(name) {
   });
   if (name === 'tracker') renderTracker();
 }
+
+// ===== BEWERBUNGSTIPPS =====
+let currentTipJobIndex = null;
+const CV_CHECKLISTS = {
+  'Executive': { title: 'Executive Level – CIO/Head of IT', items: [
+    { title: 'Führungserfahrung mit Zahlen', tips: 'Teamgröße, Budget-Verantwortung, strategische Projekte: z.B. "Führung von 150+ IT-Fachkräften, 50 Mio. Euro Budget"' },
+    { title: 'Cloud-Transformation', tips: 'On-Premise → Cloud: Azure, AWS? Welche Workloads? Einsparungen? Timeline?' },
+    { title: 'IT-Strategie & Roadmap', tips: 'Digital Transformation, IT-Roadmap, Digitalisierungsprogramme, C-Level Reporting' },
+    { title: 'Compliance & Security', tips: 'Banking: DORA, BaFin. Public: BSI-Grundschutz. Zeige ISO 27001, ITIL-Zerts.' },
+    { title: 'Branche konkretisieren', tips: 'Welcher Sektor? Größe? Tech-Stack? Beispiel: "CIO bei Fintech, 500+ MA, Cloud-Banking"' },
+    { title: 'Change Management Skills', tips: 'Agile Transformation, digitale Kultur, Stakeholder-Management – weiche Skills zählen!' }
+  ] },
+  'Senior': { title: 'Senior Level – IT-Manager/Consultant', items: [
+    { title: 'Projektverantwortung mit Zahlen', tips: '3+ Enterprise-Transformationen à 5-20 Mio. Euro, erfolgreich on-time/on-budget' },
+    { title: 'Zertifikationen prominent', tips: 'ITIL, PMP/PRINCE2, AWS/Azure-Certs oben im Profil. Aktuelle Nachweise!' },
+    { title: 'Spezialisierung & Nische', tips: 'Bist du Transformations-Experte? Service-Mgmt-Spezialist? Klar positionieren.' },
+    { title: 'Kundenverantwortung & Verkauf', tips: 'Für Consulting: Kundengewinnung, Relationship-Mgmt, Service-Verkauf' },
+    { title: 'Mehrere parallele Erfolge', tips: 'Multi-Projekte? Zeige parallele Erfolge und Kontexte.' }
+  ] },
+  'default': { title: 'CV-Optimierung für deine Rolle', items: [
+    { title: 'Anforderungen matchen', tips: 'Keywords aus der Ausschreibung sollten auch in deinem CV vorkommen.' },
+    { title: 'Quantitative Erfolge', tips: 'Prozessoptimierung 30%? Kostenersparnis 500k? Mit Zahlen überzeugst du.' },
+    { title: 'Timeline & Kontinuität', tips: 'Zeige stabile Karrierentwicklung. Lücken erklären.' },
+    { title: 'Branchenerfahrung', tips: 'Banking für Finanzwirtschaft? Public Sector für Behörden? Das zählt.' },
+    { title: 'Action Verbs verwenden', tips: 'Nicht "War verantwortlich". Sondern: "Konzipiert, implementiert, optimiert"' },
+    { title: 'Lücken adressieren', tips: 'Fehlende Skills? Kurse, Selbststudium – Lernbereitschaft zeigen.' }
+  ] }
+};
+
+function openApplicationTips(jobIndex) {
+  currentTipJobIndex = jobIndex;
+  const job = jobsData[jobIndex];
+  if (!job) return;
+  document.getElementById('tips-job-title').textContent = escapeHtml(job.title);
+  document.getElementById('tips-job-company').textContent = '@ ' + escapeHtml(job.company) + ' · ' + escapeHtml(job.branche);
+  switchTipsTab('cv');
+  renderCVChecklist(jobIndex);
+  document.getElementById('tips-modal').classList.add('active');
+}
+
+function closeTipsModal() {
+  document.getElementById('tips-modal').classList.remove('active');
+  document.getElementById('letter-output').innerHTML = '';
+}
+
+function switchTipsTab(tabName) {
+  document.querySelectorAll('#tips-modal .modal-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('#tips-modal .tab-pane').forEach(t => t.classList.remove('active'));
+  event.target.classList.add('active');
+  document.getElementById('tips-tab-' + tabName).classList.add('active');
+}
+
+function renderCVChecklist(jobIndex) {
+  const job = jobsData[jobIndex];
+  const level = job.level || 'default';
+  const checklist = CV_CHECKLISTS[level] || CV_CHECKLISTS['default'];
+  let html = '<div style="margin-bottom:16px;padding:12px;background:var(--accent);color:#fff;border-radius:6px;font-size:0.85rem;font-weight:600;">' + checklist.title + '</div>';
+  const jobSkills = (job.anforderungen || '').split(';').map(s => s.trim().toLowerCase()).filter(s => s);
+  const profileSkills = (PROFILE.skills || []).map(s => s.toLowerCase());
+  const missingSkills = jobSkills.filter(skill => !profileSkills.some(ps => ps.includes(skill.split(' ')[0]))).slice(0, 5);
+  if (missingSkills.length > 0) {
+    html += '<div class="gap-alert"><strong>🎯 Opportunity:</strong> Diese Skills sind gesucht – hast du sie? Erwähne sie!<br />';
+    missingSkills.forEach(s => { html += '<span class="skills-chip">' + escapeHtml(s.substring(0, 25)) + '</span>'; });
+    html += '</div>';
+  }
+  checklist.items.forEach(item => {
+    html += '<div class="checklist-item"><div class="checklist-checkbox"><input type="checkbox" /></div><div class="checklist-content"><strong>' + escapeHtml(item.title) + '</strong><p>' + escapeHtml(item.tips) + '</p></div></div>';
+  });
+  document.getElementById('cv-checklist').innerHTML = html;
+}
+
+function generateLetterOpening() {
+  const job = jobsData[currentTipJobIndex];
+  const contact = document.getElementById('letter-contact').value;
+  let text = (contact ? 'Sehr geehrte Frau/Herr ' + escapeHtml(contact) : 'Sehr geehrte Damen und Herren') + ',\n\n';
+  text += 'mit großem Interesse bewerbe ich mich auf die Position „' + escapeHtml(job.title) + '". ';
+  text += 'Meine Expertise in ' + PROFILE.skills.slice(0, 3).join(', ') + ' sowie 30 Jahre IT-Management machen mich zur idealen Besetzung.';
+  showLetterOutput(text, 'Eröffnung');
+}
+
+function generateLetterBody() {
+  const job = jobsData[currentTipJobIndex];
+  let text = '\n\nIhre Anforderungen – meine Erfahrung:\n';
+  (job.anforderungen || '').split(';').map(s => s.trim()).slice(0, 3).forEach((req, i) => {
+    text += '\n' + (i + 1) + '. ' + escapeHtml(req) + ': ';
+    const matching = PROFILE.skills.find(s => req.toLowerCase().includes(s.toLowerCase()));
+    text += matching ? 'Erfahrung in ' + escapeHtml(matching) + ' nachweisbar.' : 'Breite Expertise in diesem Bereich.';
+  });
+  showLetterOutput(text, 'Hauptteil');
+}
+
+function generateLetterClosing() {
+  const name = document.getElementById('letter-name').value || 'Ihr Kandidat';
+  const job = jobsData[currentTipJobIndex];
+  const text = '\n\nIch freue mich auf die Gelegenheit, meine Qualifikationen zu diskutieren und Ihr Team bei der IT-Transformation zu unterstützen.\n\nMit freundlichen Grüßen,\n' + escapeHtml(name);
+  showLetterOutput(text, 'Abschluss');
+}
+
+function generateFullLetter() {
+  const job = jobsData[currentTipJobIndex];
+  const name = document.getElementById('letter-name').value || 'Ihr Kandidat';
+  const contact = document.getElementById('letter-contact').value;
+  let text = (contact ? 'Sehr geehrte Frau/Herr ' + escapeHtml(contact) : 'Sehr geehrte Damen und Herren') + ',\n\n';
+  text += 'mit großem Interesse bewerbe ich mich auf die Position „' + escapeHtml(job.title) + '". Meine Expertise passt ideal zu Ihren Anforderungen.\n';
+  text += '\nIhre Anforderungen – meine Erfahrung:\n';
+  (job.anforderungen || '').split(';').map(s => s.trim()).slice(0, 3).forEach((req, i) => {
+    text += '\n' + (i + 1) + '. ' + escapeHtml(req) + ': Breite Expertise aus über 30 Jahren IT-Management.';
+  });
+  text += '\n\nIch freue mich auf ein Gespräch und den Austausch über die Möglichkeiten.\n\nMit freundlichen Grüßen,\n' + escapeHtml(name);
+  showLetterOutput(text, 'Komplettes Anschreiben');
+}
+
+function showLetterOutput(text, label) {
+  const out = document.getElementById('letter-output');
+  out.innerHTML = '<div style="margin-top:16px;"><strong style="color:var(--primary);font-size:0.9rem;">📄 ' + label + ':</strong><div class="generator-output">' + escapeHtml(text) + '</div><button class="generator-btn" onclick="copyToClipboard()" style="margin-top:10px;background:var(--green);">📋 In Zwischenablage</button></div>';
+}
+
+function copyToClipboard() {
+  const elem = document.querySelector('.generator-output');
+  if (elem && navigator.clipboard) {
+    navigator.clipboard.writeText(elem.textContent).then(() => alert('✓ Anschreiben kopiert!'));
+  }
+}
+
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeTipsModal(); });
 
 // ===== SORTIERUNG =====
 function sortTable(tableId, col) {

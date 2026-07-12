@@ -7,14 +7,19 @@ Verwendung:
     Ohne Argumente: konvertiert EG_Retouren_Analyse.md
 
 Einmalige Einrichtung (falls noch nicht installiert):
-    pip install playwright markdown
-    playwright install chromium
+    1) Python 3 + pip installieren
+    2) pip install playwright markdown
+    3) playwright install chromium
+
+Optional:
+    CHROME_PATH setzen, um ein bestimmtes Chrome/Chromium-Binary zu verwenden.
 """
 
 import sys
 import pathlib
 import tempfile
 import re
+import os
 import markdown
 from playwright.sync_api import sync_playwright
 
@@ -239,9 +244,22 @@ def _fix_br_in_tables(md_text: str) -> str:
     return "\n".join(result) + ("\n" if md_text.endswith("\n") else "")
 
 
+def _get_browser_launch_kwargs() -> dict:
+    """Returns launch kwargs with optional CHROME_PATH override.
+
+    By default, Playwright uses its installed Chromium build. If CHROME_PATH
+    is set and points to an existing executable, it is used instead.
+    """
+    chrome_path = os.environ.get("CHROME_PATH", "").strip()
+    if chrome_path and pathlib.Path(chrome_path).exists():
+        return {"executable_path": chrome_path}
+    return {}
+
+
 def convert(md_path: pathlib.Path, pdf_path: pathlib.Path):
     md_text = md_path.read_text(encoding="utf-8")
     md_text = sanitize_confluence_tasklist_artifacts(md_text)
+    md_text = _fix_br_in_tables(md_text)
     html_body = markdown.markdown(
         md_text, extensions=["tables", "fenced_code", "nl2br"]
     )
@@ -260,12 +278,9 @@ def convert(md_path: pathlib.Path, pdf_path: pathlib.Path):
         tmp.write(html)
         tmp_path = pathlib.Path(tmp.name)
 
-    # Vorhandenes Chrome nutzen – kein separater Playwright-Chromium-Download nötig
-    CHROME_PATH = r"C:\Program Files\Google\Chrome\Application\chrome.exe"
-
     try:
         with sync_playwright() as p:
-            browser = p.chromium.launch(executable_path=CHROME_PATH)
+            browser = p.chromium.launch(**_get_browser_launch_kwargs())
             page = browser.new_page()
             page.goto(tmp_path.as_uri(), wait_until="networkidle")
             header_template = (
