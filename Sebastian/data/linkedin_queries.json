@@ -1,42 +1,42 @@
 [
   {
-    "title": "🔵 CFD / Strömungsmechanik – EU",
-    "description": "Strömungsmechanik, CFD, Fluid Mechanics – gesamte EU, Remote/Hybrid",
+    "title": "🔵 CFD / Strömungsmechanik – DACH/EU",
+    "description": "CFD, Fluid Mechanics, Strömungsmechanik – Deutschland, Österreich, EU; bevorzugt Hybrid/Remote",
     "url": "https://www.linkedin.com/jobs/search/?keywords=CFD%20Fluid%20Mechanics%20Mechanical%20Engineer&location=European%20Union&f_WT=1%2C2%2C3&f_E=2%2C3"
   },
   {
-    "title": "🚗 Fahrzeugdynamik / NVH – EU",
-    "description": "Vehicle Dynamics, NVH, Acoustics, Automotive Engineering – EU",
-    "url": "https://www.linkedin.com/jobs/search/?keywords=Vehicle%20Dynamics%20NVH%20Mechanical%20Engineer&location=European%20Union&f_WT=1%2C2%2C3"
+    "title": "🚗 Fahrzeugdynamik / NVH – DE",
+    "description": "Vehicle Dynamics, NVH, Acoustic Engineer, Fahrverhalten – Deutschland",
+    "url": "https://www.linkedin.com/jobs/search/?keywords=Vehicle%20Dynamics%20NVH%20Acoustic%20Engineer&location=Deutschland&f_WT=1%2C2%2C3&f_E=2%2C3"
+  },
+  {
+    "title": "🧪 Versuchsingenieur / Gesamtfahrzeugerprobung – DE",
+    "description": "Versuchsingenieur, Gesamtfahrzeugerprobung, Test Engineer, Messtechnik – Deutschland",
+    "url": "https://www.linkedin.com/jobs/search/?keywords=Versuchsingenieur%20Gesamtfahrzeugerprobung%20Messtechnik&location=Deutschland&f_WT=1%2C2%2C3"
   },
   {
     "title": "✈️ Aerodynamik / Luft- & Raumfahrt – EU",
-    "description": "Aerodynamics, Aerospace Engineer, Turbomachinery – EU",
-    "url": "https://www.linkedin.com/jobs/search/?keywords=Aerodynamics%20Aerospace%20Mechanical%20Engineer&location=European%20Union&f_WT=1%2C2%2C3"
-  },
-  {
-    "title": "🌬️ Windenergie / Erneuerbare – EU",
-    "description": "Wind Energy, Fluid Dynamics, Mechanical Engineer – EU",
-    "url": "https://www.linkedin.com/jobs/search/?keywords=Wind%20Energy%20Fluid%20Dynamics%20Engineer&location=European%20Union&f_WT=1%2C2%2C3"
+    "description": "Aerodynamics, Aerospace Engineer, Flight Mechanics, Turbomachinery – EU",
+    "url": "https://www.linkedin.com/jobs/search/?keywords=Aerodynamics%20Aerospace%20Flight%20Mechanics%20Engineer&location=European%20Union&f_WT=1%2C2%2C3"
   },
   {
     "title": "🔬 Forschung / Wissenschaftlicher Mitarbeiter – DE",
-    "description": "Wissenschaftlicher Mitarbeiter, Strömungsmechanik, Forschung – Deutschland",
-    "url": "https://www.linkedin.com/jobs/search/?keywords=Wissenschaftlicher%20Mitarbeiter%20Str%C3%B6mungsmechanik&location=Deutschland&f_WT=1%2C2%2C3"
+    "description": "Research Assistant, Wissenschaftlicher Mitarbeiter, Fluid Mechanics, Thermodynamics – Deutschland",
+    "url": "https://www.linkedin.com/jobs/search/?keywords=Research%20Assistant%20Fluid%20Mechanics%20Thermodynamics&location=Deutschland&f_WT=1%2C2%2C3"
+  },
+  {
+    "title": "🔍 Optische Messtechnik / Strömungsdiagnostik – DE",
+    "description": "Optische Messtechnik, Strömungsdiagnostik, Imaging, Experimental Mechanics – Deutschland",
+    "url": "https://www.linkedin.com/jobs/search/?keywords=Optische%20Messtechnik%20Str%C3%B6mungsdiagnostik%20Experimental%20Mechanics&location=Deutschland&f_WT=1%2C2%2C3"
   },
   {
     "title": "🚀 New Space / Propulsion – EU",
-    "description": "Propulsion Engineer, Rocket, Fluid Mechanics – EU (New Space)",
-    "url": "https://www.linkedin.com/jobs/search/?keywords=Propulsion%20Engineer%20Fluid%20Mechanics%20Space&location=European%20Union&f_WT=1%2C2%2C3"
+    "description": "Propulsion Engineer, Space, Fluid Mechanics, Thermal Analysis – EU",
+    "url": "https://www.linkedin.com/jobs/search/?keywords=Propulsion%20Engineer%20Fluid%20Mechanics%20Thermal%20Analysis&location=European%20Union&f_WT=1%2C2%2C3"
   },
   {
-    "title": "🔊 NVH / Akustik – EU",
-    "description": "NVH Engineer, Acoustic Engineer, Vibration, Noise – EU (Automotive + Industrie)",
-    "url": "https://www.linkedin.com/jobs/search/?keywords=NVH%20Acoustic%20Engineer%20Mechanical&location=European%20Union&f_WT=1%2C2%2C3&f_E=2%2C3"
-  },
-  {
-    "title": "🔬 Messtechnik / Versuchsingenieur – DE",
-    "description": "Messtechnik, Versuchsingenieur, optische Messtechnik – Deutschland",
-    "url": "https://www.linkedin.com/jobs/search/?keywords=Messtechnik%20Versuchsingenieur%20Maschinenbau&location=Deutschland&f_WT=1%2C2%2C3"
+    "title": "⚡ Thermofluid / Energie-Simulation – DE/EU",
+    "description": "Thermofluid, Thermal Hydraulic, Simulation Engineer, Energy Systems – Deutschland und EU",
+    "url": "https://www.linkedin.com/jobs/search/?keywords=Thermofluid%20Simulation%20Engineer%20Energy%20Systems&location=European%20Union&f_WT=1%2C2%2C3"
   }
 ]
