@@ -46,13 +46,13 @@ foreach ($f in @("profile.json","firmen.json","jobs.json","linkedin_queries.json
 }
 
 # --- Daten einlesen (explizit UTF-8) ---
-$profileJson  = [System.IO.File]::ReadAllText((Join-Path $dataDir "profile.json"),          [System.Text.Encoding]::UTF8)
+$metaJson     = [System.IO.File]::ReadAllText((Join-Path $dataDir "profile.json"),          [System.Text.Encoding]::UTF8)
 $firmenJson   = [System.IO.File]::ReadAllText((Join-Path $dataDir "firmen.json"),            [System.Text.Encoding]::UTF8)
 $jobsJson     = [System.IO.File]::ReadAllText((Join-Path $dataDir "jobs.json"),              [System.Text.Encoding]::UTF8)
 $linkedinJson = [System.IO.File]::ReadAllText((Join-Path $dataDir "linkedin_queries.json"),  [System.Text.Encoding]::UTF8)
 
-$profile = $profileJson | ConvertFrom-Json
-$slug    = $profile.slug
+$candidateMeta = $metaJson | ConvertFrom-Json
+$slug          = $candidateMeta.slug
 
 # --- Template einlesen ---
 $template = [System.IO.File]::ReadAllText($templateFile, [System.Text.Encoding]::UTF8)
@@ -63,7 +63,7 @@ $endMarker   = '// ===== END DATA SECTION ====='
 
 $nl = [System.Environment]::NewLine
 $newDataSection = $startMarker + $nl
-$newDataSection += "const PROFILE = " + $profileJson  + ";" + $nl
+$newDataSection += "const PROFILE = " + $metaJson    + ";" + $nl
 $newDataSection += "const firmenData = " + $firmenJson + ";" + $nl
 $newDataSection += "const jobsData = " + $jobsJson     + ";" + $nl
 $newDataSection += "const linkedinQueries = " + $linkedinJson + ";" + $nl
@@ -85,11 +85,11 @@ $outputFile = Join-Path $candidateDir ($slug + "_jobs_dashboard.html")
 Write-Host ("[OK] Dashboard:   " + $outputFile)
 
 # --- manifest.json generieren ---
-$firstName = ($profile.name -split ' ')[0]
+$firstName = ($candidateMeta.name -split ' ')[0]
 $manifest = [ordered]@{
-    name             = "Job-Dashboard __ " + $profile.name
+  name             = "Job-Dashboard __ " + $candidateMeta.name
     short_name       = "Jobs __ " + $firstName
-    description      = $profile.subtitle
+  description      = $candidateMeta.subtitle
     start_url        = "./" + $slug + "_jobs_dashboard.html"
     display          = "standalone"
     background_color = "#f4f7fb"
@@ -104,7 +104,13 @@ $manifestJson = $manifest | ConvertTo-Json -Depth 5 | ForEach-Object { $_ -repla
 [System.IO.File]::WriteAllText((Join-Path $candidateDir "manifest.json"), $manifestJson, [System.Text.Encoding]::UTF8)
 Write-Host "[OK] manifest.json"
 
-$swContent = "const CACHE_NAME = 'jobs-" + $slug + "-v1';" + $nl
+$cacheVersion = if ($candidateMeta.standDatum) {
+  ($candidateMeta.standDatum -replace '[^0-9]', '')
+} else {
+  (Get-Date -Format 'yyyyMMdd')
+}
+
+$swContent = "const CACHE_NAME = 'jobs-" + $slug + "-" + $cacheVersion + "';" + $nl
 $swContent += "const ASSETS = [" + $nl
 $swContent += "  './" + $slug + "_jobs_dashboard.html'," + $nl
 $swContent += "  './manifest.json'," + $nl
@@ -149,11 +155,11 @@ Write-Host "[OK] sw.js"
 $indexContent = "<!DOCTYPE html>" + $nl
 $indexContent += "<html><head><meta charset=""UTF-8"">" + $nl
 $indexContent += "<meta http-equiv=""refresh"" content=""0; url=" + $slug + "_jobs_dashboard.html"">" + $nl
-$indexContent += "<title>Job-Dashboard __ " + $profile.name + "</title>" + $nl
+$indexContent += "<title>Job-Dashboard __ " + $candidateMeta.name + "</title>" + $nl
 $indexContent += "</head><body></body></html>" + $nl
 [System.IO.File]::WriteAllText((Join-Path $candidateDir "index.html"), $indexContent, [System.Text.Encoding]::UTF8)
 Write-Host "[OK] index.html"
 
 Write-Host ""
-Write-Host ("  Fertig! Dashboard fuer " + $profile.name + " generiert.")
+Write-Host ("  Fertig! Dashboard fuer " + $candidateMeta.name + " generiert.")
 Write-Host ("  Oeffnen: " + $outputFile)
