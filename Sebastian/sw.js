@@ -33,4 +33,4 @@ self.addEventListener('fetch', event => {
       });
     })
   );
-});
+});// Cache invalidation: Di 21. Jul 23:03:17 CEST 2026
