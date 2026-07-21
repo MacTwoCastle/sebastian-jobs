@@ -1,14 +1,11 @@
-# CV- und Zeugnis-Dokumente niemals veröffentlichen
-**/*.pdf
-**/*.md
-**/ki-ready/
-**/ki-ready-linux-test/
+# Alles ignorieren ...
+*
 
-# Skripte und interne Projektdateien
-*.ps1
-*.py
-_template/
-
-# macOS / Editor
-.DS_Store
-.vscode/
+# ... außer den erlaubten Web-App-Dateien für Sebastian
+!.gitignore
+!Sebastian/
+!Sebastian/index.html
+!Sebastian/sebastian_jobs_dashboard.html
+!Sebastian/manifest.json
+!Sebastian/sw.js
+!Sebastian/icon.svg
