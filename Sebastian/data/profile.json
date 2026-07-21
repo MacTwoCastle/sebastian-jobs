@@ -1,26 +1,29 @@
 {
   "name": "Sebastian Steinhäuser",
   "slug": "sebastian",
-  "subtitle": "M.Sc. Maschinenbau · Fluid Mechanics · Fahrzeugdynamik/NVH · Optische Messtechnik · Versuch & Simulation · KIT Karlsruhe",
-  "searchStatus": "Recherche aktualisiert",
-  "standDatum": "15.07.2026",
+  "subtitle": "M.Sc. Maschinenbau (1,6) · Prüfstandsentwicklung · Battery Safety & Validierung · Experimentelle Strömungsmechanik · Fahrzeugkomfort / NVH · Aerodynamik",
+  "searchStatus": "Aktiv suchend – M.Sc. 1,6 abgeschlossen 05/2026 · Werkstudent Porsche AG Battery Safety (ab 04/2026)",
+  "standDatum": "21.07.2026",
   "skills": [
-    "CFD", "Strömungsmechanik", "Fluid Dynamics", "Fahrzeugdynamik",
-    "NVH", "Akustik", "Aerodynamik", "Thermodynamik", "Messtechnik",
-    "STAR-CCM+", "ANSYS", "Python", "MATLAB", "Maschinenbau",
-    "Versuch", "Simulation", "CATIA", "Creo", "Blender",
-    "Segelflug", "Akaflieg", "Optische Messtechnik", "Raytracing"
+    "Prüfstandsentwicklung", "Batteriesicherheit", "Validierung", "Versuch",
+    "Experimentelle Strömungsmechanik", "Aerodynamik", "Messtechnik", "Fahrzeugerprobung",
+    "Fahrzeugkomfort & Akustik (NVH)", "Fahrzeugleichtbau", "Lasertechnik (Grundlagen)",
+    "Werkstoffkunde", "Modellbildung & Simulation",
+    "Body in White", "Leckagetests", "Optische Messtechnik", "Hochgeschwindigkeitskameras",
+    "Thermografie", "Thermoelemente", "Prandtl-Sonden", "Datenlogger", "PFV4", "PEA",
+    "CATIA V5", "Creo", "Blender", "Raytracing",
+    "CFRP", "Fertigung", "Prototypenbau", "Akaflieg",
+    "Drohnenpilot EASA A1/A3", "MS Copilot"
   ],
   "branchen": [
-    "Automotive", "Luft- & Raumfahrt", "Energie", "Forschung",
-    "Verteidigung", "Industrie", "Hausgeräte", "NVH / Akustik", "Messtechnik"
+    "Automotive", "Automotive Engineering Services", "Messtechnik", "Luft- & Raumfahrt",
+    "Forschung", "Industrie", "Batterie / E-Mobility", "NVH / Akustik"
   ],
   "laender": [
-    "Deutschland", "Frankreich", "Österreich", "Niederlande",
-    "Dänemark", "Schweden", "Belgien", "Spanien"
+    "Deutschland", "Österreich", "Schweden", "Dänemark"
   ],
-  "firmenInfobox": "<strong>Profil-Matching:</strong> Im Fokus stehen Unternehmen, bei denen Sebastians Profil aus <strong>Fluid Mechanics, Fahrzeugdynamik/NVH, optischer Messtechnik, experimenteller Forschung und anwendungsnaher Simulation</strong> direkt anschlussfaehig ist. Priorisiert werden Luft- und Raumfahrt, Fahrzeugentwicklung, Messtechnik, Forschung und ausgewaehlte Energie-/Thermofluid-Rollen.",
-  "jobsInfobox": "<strong>Quellen:</strong> StepStone, LinkedIn, Indeed, XING und Karriereseiten – selektiv aktualisiert am 15.07.2026. Priorisiert sind Einstiegs- und Juniorrollen mit klarem Bezug zu CFD, NVH, Versuch, Aerodynamik und optischer Messtechnik. Klicke auf <em>Jetzt bewerben</em> fuer den direkten Link zur Stellenanzeige.",
-  "linkedinKeywordsTipp": "Empfohlene Keywords: <em>CFD Engineer, Fluid Dynamics Engineer, NVH Engineer, Versuchsingenieur, Optische Messtechnik, Aerodynamics Engineer, Research Assistant Fluid Mechanics</em>",
-  "linkedinCompaniesTipp": "Profile von Firmen wie <strong>Airbus, MTU, Siemens Energy, MAN Truck & Bus, Schempp-Hirth, Polytec, Mueller-BBM, AVL, DLR und Fraunhofer</strong> direkt folgen"
+  "firmenInfobox": "<strong>Profil-Matching:</strong> Im Fokus stehen Unternehmen, bei denen Sebastians Profil aus <strong>Prüfstandsentwicklung, Battery Safety (Li-Ion / Thermal Runaway), experimenteller Strömungsmechanik, NVH/Fahrzeugkomfort, Fahrzeugversuch, optischer Messtechnik und hands-on Fertigung</strong> direkt anschlussfähig ist. Priorisiert werden Automotive-Entwicklung, Validierung, Battery/E-Mobility, Messtechnik, Prüfdienstleistungen und ausgewählte Luft- &amp; Raumfahrt-Rollen.",
+  "jobsInfobox": "<strong>Quellen:</strong> LinkedIn, StepStone, Indeed, XING und Karriereseiten – selektiv aktualisiert am 21.07.2026. Priorisiert sind Einstiegs- und Juniorrollen mit klarem Bezug zu Prüfstand, Validierung, Battery Safety, Versuch, Fahrzeugentwicklung, NVH/Fahrzeugkomfort, Aerodynamik und optischer Messtechnik. Klicke auf <em>Jetzt bewerben</em> für den direkten Link zur Stellenanzeige.",
+  "linkedinKeywordsTipp": "Empfohlene Keywords: <em>Test Bench Engineer, Battery Safety Engineer, Prüfstandsingenieur, Validation Engineer, Versuchsingenieur, NVH Engineer, Vehicle Testing, Optische Messtechnik, Aerodynamics Engineer, Lightweight Engineer</em>",
+  "linkedinCompaniesTipp": "Profile von Firmen wie <strong>Porsche, Porsche Engineering, IAV, ATESTEO, FEV Group, Polytec, Kistler, AVL, TÜV SÜD, Audi, MAN Truck & Bus, CATL und Schempp-Hirth</strong> direkt folgen"
 }

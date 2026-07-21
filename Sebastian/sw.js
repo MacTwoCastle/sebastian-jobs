@@ -1,4 +1,4 @@
-﻿const CACHE_NAME = 'jobs-sebastian-15072026';
+﻿const CACHE_NAME = 'jobs-sebastian-21072026';
 const ASSETS = [
   './sebastian_jobs_dashboard.html',
   './manifest.json',

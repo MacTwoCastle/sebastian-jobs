@@ -1,0 +1,14 @@
+# CV- und Zeugnis-Dokumente niemals veröffentlichen
+**/*.pdf
+**/*.md
+**/ki-ready/
+**/ki-ready-linux-test/
+
+# Skripte und interne Projektdateien
+*.ps1
+*.py
+_template/
+
+# macOS / Editor
+.DS_Store
+.vscode/
