@@ -3,9 +3,8 @@
 
 # ... außer den erlaubten Web-App-Dateien für Sebastian
 !.gitignore
-!Sebastian/
-!Sebastian/index.html
-!Sebastian/sebastian_jobs_dashboard.html
-!Sebastian/manifest.json
-!Sebastian/sw.js
-!Sebastian/icon.svg
+!index.html
+!sebastian_jobs_dashboard.html
+!manifest.json
+!sw.js
+!icon.svg
