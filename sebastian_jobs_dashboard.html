@@ -1,10 +1,9 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="de">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Job-Dashboard</title>
-<!-- Version: 21.07.2026 22:55 - Cache Invalidation -->
 <!-- PWA -->
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#1a3a5c">
@@ -327,8 +326,11 @@
     <h2 style="font-size:1rem;font-weight:700;color:var(--primary);">🗂 Bewerbungs-Tracker</h2>
     <button class="btn btn-green" onclick="exportCSV('tracker')">⬇ CSV Export</button>
     <button class="btn btn-accent" onclick="importTrackerCSV()">⬆ CSV Import</button>
+    <button class="btn btn-outline" onclick="exportTrackerJSON()">⬇ JSON Export</button>
+    <button class="btn btn-outline" onclick="importTrackerJSONFile()">⬆ JSON Import</button>
     <input type="file" id="tracker-import-input" accept=".csv" style="display:none;" onchange="handleTrackerImport(this.files[0])">
-    <span style="font-size:0.8rem;color:var(--muted);margin-left:8px;">Status per Klick ändern · Lokal gespeichert · Import stellt alten Stand wieder her</span>
+    <input type="file" id="tracker-import-json-input" accept="application/json,.json" style="display:none;" onchange="handleTrackerImportJSON(this.files[0])">
+    <span style="font-size:0.8rem;color:var(--muted);margin-left:8px;">Status per Klick ändern · Lokal gespeichert · JSON kann im Repo/GitHub abgelegt werden</span>
   </div>
 
   <div class="stats-row">
@@ -389,109 +391,1165 @@ const PROFILE = {
   "searchStatus": "Aktiv suchend – M.Sc. 1,6 abgeschlossen 05/2026 · Werkstudent Porsche AG Battery Safety (ab 04/2026)",
   "standDatum": "21.07.2026",
   "skills": [
-    "Prüfstandsentwicklung", "Batteriesicherheit", "Validierung", "Versuch",
-    "Experimentelle Strömungsmechanik", "Aerodynamik", "Messtechnik", "Fahrzeugerprobung",
-    "Fahrzeugkomfort & Akustik (NVH)", "Fahrzeugleichtbau", "Lasertechnik (Grundlagen)",
-    "Werkstoffkunde", "Modellbildung & Simulation",
-    "Body in White", "Leckagetests", "Optische Messtechnik", "Hochgeschwindigkeitskameras",
-    "Thermografie", "Thermoelemente", "Prandtl-Sonden", "Datenlogger", "PFV4", "PEA",
-    "CATIA V5", "Creo", "Blender", "Raytracing",
-    "CFRP", "Fertigung", "Prototypenbau", "Akaflieg",
-    "Drohnenpilot EASA A1/A3", "MS Copilot"
+    "Prüfstandsentwicklung",
+    "Batteriesicherheit",
+    "Validierung",
+    "Versuch",
+    "Experimentelle Strömungsmechanik",
+    "Aerodynamik",
+    "Messtechnik",
+    "Fahrzeugerprobung",
+    "Fahrzeugkomfort & Akustik (NVH)",
+    "Fahrzeugleichtbau",
+    "Lasertechnik (Grundlagen)",
+    "Werkstoffkunde",
+    "Modellbildung & Simulation",
+    "Body in White",
+    "Leckagetests",
+    "Optische Messtechnik",
+    "Hochgeschwindigkeitskameras",
+    "Thermografie",
+    "Thermoelemente",
+    "Prandtl-Sonden",
+    "Datenlogger",
+    "PFV4",
+    "PEA",
+    "CATIA V5",
+    "Creo",
+    "Blender",
+    "Raytracing",
+    "CFRP",
+    "Fertigung",
+    "Prototypenbau",
+    "Akaflieg",
+    "Drohnenpilot EASA A1/A3",
+    "MS Copilot"
   ],
   "branchen": [
-    "Automotive", "Automotive Engineering Services", "Messtechnik", "Luft- & Raumfahrt",
-    "Forschung", "Industrie", "Batterie / E-Mobility", "NVH / Akustik"
+    "Automotive",
+    "Automotive Engineering Services",
+    "Messtechnik",
+    "Luft- & Raumfahrt",
+    "Forschung",
+    "Industrie",
+    "Batterie / E-Mobility",
+    "NVH / Akustik"
   ],
   "laender": [
-    "Deutschland", "Österreich", "Schweden", "Dänemark"
+    "Deutschland",
+    "Österreich",
+    "Schweden",
+    "Dänemark"
   ],
   "firmenInfobox": "<strong>Profil-Matching:</strong> Im Fokus stehen Unternehmen, bei denen Sebastians Profil aus <strong>Prüfstandsentwicklung, Battery Safety (Li-Ion / Thermal Runaway), experimenteller Strömungsmechanik, NVH/Fahrzeugkomfort, Fahrzeugversuch, optischer Messtechnik und hands-on Fertigung</strong> direkt anschlussfähig ist. Priorisiert werden Automotive-Entwicklung, Validierung, Battery/E-Mobility, Messtechnik, Prüfdienstleistungen und ausgewählte Luft- &amp; Raumfahrt-Rollen.",
   "jobsInfobox": "<strong>Quellen:</strong> LinkedIn, StepStone, Indeed, XING und Karriereseiten – selektiv aktualisiert am 21.07.2026. Priorisiert sind Einstiegs- und Juniorrollen mit klarem Bezug zu Prüfstand, Validierung, Battery Safety, Versuch, Fahrzeugentwicklung, NVH/Fahrzeugkomfort, Aerodynamik und optischer Messtechnik. Klicke auf <em>Jetzt bewerben</em> für den direkten Link zur Stellenanzeige.",
   "linkedinKeywordsTipp": "Empfohlene Keywords: <em>Test Bench Engineer, Battery Safety Engineer, Prüfstandsingenieur, Validation Engineer, Versuchsingenieur, NVH Engineer, Vehicle Testing, Optische Messtechnik, Aerodynamics Engineer, Lightweight Engineer</em>",
   "linkedinCompaniesTipp": "Profile von Firmen wie <strong>Porsche, Porsche Engineering, IAV, ATESTEO, FEV Group, Polytec, Kistler, AVL, TÜV SÜD, Audi, MAN Truck & Bus, CATL und Schempp-Hirth</strong> direkt folgen"
-}
-;
+};
 const firmenData = [
-  { "name": "Airbus SE",                                          "branche": "Luft- & Raumfahrt", "land": "Deutschland / Frankreich / Spanien", "laender": ["Deutschland","Frankreich","Spanien"], "ma": 135000, "ma_label": "~135.000", "umsatz": "~65 Mrd. €",         "match": 5, "portal": "https://www.airbus.com/en/careers",                                                              "groesse": "gross" },
-  { "name": "Siemens Energy AG",                                  "branche": "Energie",            "land": "Deutschland",                        "laender": ["Deutschland"],                        "ma": 100000, "ma_label": "~100.000", "umsatz": "~35 Mrd. €",         "match": 5, "portal": "https://jobs.siemens-energy.com/",                                                               "groesse": "gross" },
-  { "name": "BMW AG",                                             "branche": "Automotive",         "land": "Deutschland",                        "laender": ["Deutschland"],                        "ma": 150000, "ma_label": "~150.000", "umsatz": "~142 Mrd. €",        "match": 4, "portal": "https://www.bmwgroup.jobs/de/",                                                                 "groesse": "gross" },
-  { "name": "Porsche AG",                                         "branche": "Automotive",         "land": "Deutschland",                        "laender": ["Deutschland"],                        "ma": 40000,  "ma_label": "~40.000",  "umsatz": "~40 Mrd. €",         "match": 5, "portal": "https://www.porsche.com/germany/aboutporsche/jobs/",                                             "groesse": "gross" },
-  { "name": "Porsche Engineering Group GmbH",                     "branche": "Automotive Engineering Services", "land": "Deutschland",                "laender": ["Deutschland"],                        "ma": 2000,   "ma_label": "~2.000",   "umsatz": "n.a.",               "match": 5, "portal": "https://www.porscheengineering.com/peg/de/career/jobs/",                                          "groesse": "mittel" },
-  { "name": "IAV GmbH",                                           "branche": "Automotive Engineering Services", "land": "Deutschland",                "laender": ["Deutschland"],                        "ma": 6800,   "ma_label": "~6.800",   "umsatz": "n.a.",               "match": 5, "portal": "https://www.iav.com/de/karriere/",                                                           "groesse": "mittel" },
-  { "name": "ATESTEO GmbH & Co. KG",                              "branche": "Automotive Engineering Services", "land": "Deutschland",                "laender": ["Deutschland"],                        "ma": 800,    "ma_label": "~800",     "umsatz": "n.a.",               "match": 5, "portal": "https://atesteo.com/karriere-jobs/",                                                       "groesse": "mittel" },
-  { "name": "Kistler Group",                                      "branche": "Messtechnik",        "land": "Deutschland / Schweiz",              "laender": ["Deutschland"],                        "ma": 2200,   "ma_label": "~2.200",   "umsatz": "~460 Mio. CHF",      "match": 5, "portal": "https://www.kistler.com/DE/de/jobs-und-karriere/career",                                      "groesse": "mittel" },
-  { "name": "Bosch Engineering GmbH",                             "branche": "Automotive Engineering Services", "land": "Deutschland",                "laender": ["Deutschland"],                        "ma": 3300,   "ma_label": "~3.300",   "umsatz": "Teil Bosch",         "match": 4, "portal": "https://www.bosch.de/karriere/",                                                            "groesse": "mittel" },
-  { "name": "Mercedes-Benz AG",                                   "branche": "Automotive",         "land": "Deutschland",                        "laender": ["Deutschland"],                        "ma": 160000, "ma_label": "~160.000", "umsatz": "~153 Mrd. €",        "match": 4, "portal": "https://www.mercedes-benz.com/de/career/",                                                       "groesse": "gross" },
-  { "name": "MAHLE GmbH",                                         "branche": "Automotive",         "land": "Deutschland",                        "laender": ["Deutschland"],                        "ma": 72000,  "ma_label": "~72.000",  "umsatz": "~12 Mrd. €",         "match": 4, "portal": "https://jobs.mahle.com/",                                                                        "groesse": "gross" },
-  { "name": "Voith GmbH & Co. KGaA",                              "branche": "Industrie",          "land": "Deutschland",                        "laender": ["Deutschland"],                        "ma": 22000,  "ma_label": "~22.000",  "umsatz": "~5 Mrd. €",          "match": 4, "portal": "https://www.voith.com/de/unternehmen/karriere.html",                                             "groesse": "gross" },
-  { "name": "MTU Aero Engines AG",                                "branche": "Luft- & Raumfahrt",  "land": "Deutschland",                        "laender": ["Deutschland"],                        "ma": 12000,  "ma_label": "~12.000",  "umsatz": "~7 Mrd. €",          "match": 5, "portal": "https://www.mtu.de/de/karriere/",                                                                "groesse": "gross" },
-  { "name": "DLR – Deutsches Zentrum für Luft- und Raumfahrt",    "branche": "Forschung",          "land": "Deutschland",                        "laender": ["Deutschland"],                        "ma": 10000,  "ma_label": "~10.000",  "umsatz": "~1 Mrd. € (Budget)", "match": 5, "portal": "https://www.dlr.de/de/karriere",                                                                 "groesse": "gross" },
-  { "name": "Rheinmetall AG",                                     "branche": "Verteidigung",       "land": "Deutschland",                        "laender": ["Deutschland"],                        "ma": 35000,  "ma_label": "~35.000",  "umsatz": "~10 Mrd. €",         "match": 3, "portal": "https://www.rheinmetall.com/de/karriere",                                                        "groesse": "gross" },
-  { "name": "Fraunhofer-Gesellschaft",                            "branche": "Forschung",          "land": "Deutschland",                        "laender": ["Deutschland"],                        "ma": 32000,  "ma_label": "~32.000",  "umsatz": "~3 Mrd. € (Budget)", "match": 5, "portal": "https://www.fraunhofer.de/de/jobs-und-karriere.html",                                            "groesse": "gross" },
-  { "name": "Isar Aerospace SE",                                  "branche": "Luft- & Raumfahrt",  "land": "Deutschland",                        "laender": ["Deutschland"],                        "ma": 700,    "ma_label": "~700",     "umsatz": "n.a. (Start-up)",    "match": 4, "portal": "https://www.isaraerospace.com/careers",                                                          "groesse": "mittel" },
-  { "name": "Wingfan Ltd. & Co. KG",                              "branche": "Industrie",          "land": "Deutschland",                        "laender": ["Deutschland"],                        "ma": 100,    "ma_label": "51–250",    "umsatz": "n.a.",               "match": 4, "portal": "https://www.stepstone.de/cmp/de/Wingfan-Ltd-Co-KG-425087/jobs.html",                             "groesse": "klein" },
-  { "name": "SHENGU Europäisches Forschungszentrum GmbH",         "branche": "Forschung",          "land": "Deutschland",                        "laender": ["Deutschland"],                        "ma": 50,     "ma_label": "<100",      "umsatz": "n.a.",               "match": 4, "portal": "https://www.stepstone.de/cmp/de/shengu-europaeisches-forschungszentrum-gmbh-227497/jobs.html", "groesse": "klein" },
-  { "name": "Diehl Defence GmbH & Co. KG",                        "branche": "Verteidigung",       "land": "Deutschland",                        "laender": ["Deutschland"],                        "ma": 3000,   "ma_label": "~3.000",   "umsatz": "~1,5 Mrd. €",        "match": 3, "portal": "https://www.diehl.com/de/karriere.html",                                                         "groesse": "mittel" },
-  { "name": "Vestas Wind Systems A/S",                            "branche": "Energie",            "land": "Dänemark",                           "laender": ["Dänemark"],                           "ma": 29000,  "ma_label": "~29.000",  "umsatz": "~16 Mrd. €",         "match": 4, "portal": "https://www.vestas.com/en/careers",                                                              "groesse": "gross" },
-  { "name": "BORA Gruppe Deutschland",                            "branche": "Hausgeräte",         "land": "Österreich",                         "laender": ["Österreich"],                         "ma": 2000,   "ma_label": "~2.000",   "umsatz": "~500 Mio. €",        "match": 3, "portal": "https://www.bora.com/de-de/karriere",                                                            "groesse": "mittel" },
-  { "name": "Rolls-Royce Deutschland Ltd & Co KG",                "branche": "Luft- & Raumfahrt",  "land": "Deutschland",                        "laender": ["Deutschland"],                        "ma": 3500,   "ma_label": "~3.500",   "umsatz": "Teil Rolls-Royce",   "match": 5, "portal": "https://careers.rolls-royce.com/",                                                               "groesse": "mittel" },
-  { "name": "TRUMPF SE + Co. KG",                                 "branche": "Industrie",          "land": "Deutschland",                        "laender": ["Deutschland"],                        "ma": 20000,  "ma_label": "~20.000",  "umsatz": "~5,4 Mrd. €",        "match": 3, "portal": "https://www.trumpf.com/de_DE/unternehmen/karriere/",                                             "groesse": "gross" },
-  { "name": "Framatome SAS",                                      "branche": "Energie",            "land": "Frankreich / Deutschland",           "laender": ["Frankreich","Deutschland"],           "ma": 20000,  "ma_label": "~20.000",  "umsatz": "~4 Mrd. €",          "match": 5, "portal": "https://www.framatome.com/en/human-resources/",                                                 "groesse": "gross" },
-  { "name": "Westinghouse Electric Company",                      "branche": "Energie",            "land": "Schweden / Belgien",                 "laender": ["Schweden","Belgien"],                 "ma": 12000,  "ma_label": "~12.000",  "umsatz": "~3 Mrd. €",          "match": 4, "portal": "https://careers.westinghousenuclear.com/",                                                       "groesse": "gross" },
-  { "name": "GE Vernova",                                         "branche": "Energie",            "land": "Deutschland / Frankreich / EU",      "laender": ["Deutschland","Frankreich"],           "ma": 80000,  "ma_label": "~80.000",  "umsatz": "~34 Mrd. €",         "match": 4, "portal": "https://jobs.gecareers.com/vernova/global/en",                                                   "groesse": "gross" },
-  { "name": "Müller-BBM GmbH",                                    "branche": "NVH / Akustik",      "land": "Deutschland",                        "laender": ["Deutschland"],                        "ma": 600,    "ma_label": "~600",     "umsatz": "~100 Mio. €",        "match": 5, "portal": "https://www.muellerbbm.de/karriere/",                                                            "groesse": "klein" },
-  { "name": "HEAD acoustics GmbH",                                "branche": "NVH / Akustik",      "land": "Deutschland",                        "laender": ["Deutschland"],                        "ma": 500,    "ma_label": "~500",     "umsatz": "n.a.",               "match": 5, "portal": "https://www.head-acoustics.com/de/karriere",                                                     "groesse": "klein" },
-  { "name": "AVL List GmbH",                                      "branche": "NVH / Akustik",      "land": "Österreich",                         "laender": ["Österreich"],                         "ma": 14000,  "ma_label": "~14.000",  "umsatz": "~2,3 Mrd. €",        "match": 5, "portal": "https://www.avl.com/de/career",                                                                  "groesse": "gross" },
-  { "name": "Polytec GmbH",                                       "branche": "Messtechnik",        "land": "Deutschland",                        "laender": ["Deutschland"],                        "ma": 700,    "ma_label": "~700",     "umsatz": "n.a.",               "match": 5, "portal": "https://www.polytec.com/de/karriere/",                                                           "groesse": "klein" },
-  { "name": "Hottinger Brüel & Kjær (HBK)",                       "branche": "Messtechnik",        "land": "Deutschland / Dänemark",             "laender": ["Deutschland","Dänemark"],             "ma": 3500,   "ma_label": "~3.500",   "umsatz": "n.a.",               "match": 4, "portal": "https://www.hbkworld.com/de/karriere",                                                           "groesse": "mittel" },
-  { "name": "Carl Zeiss AG",                                      "branche": "Messtechnik",        "land": "Deutschland",                        "laender": ["Deutschland"],                        "ma": 40000,  "ma_label": "~40.000",  "umsatz": "~10 Mrd. €",         "match": 4, "portal": "https://www.zeiss.com/corporate/de_de/careers.html",                                             "groesse": "gross" },
-  { "name": "MAN Truck & Bus Group",                              "branche": "Automotive",         "land": "Deutschland",                        "laender": ["Deutschland"],                        "ma": 35000,  "ma_label": "~35.000",  "umsatz": "n.a.",               "match": 4, "portal": "https://www.stepstone.de/cmp/de/man-truck-%26-bus-group-29656/jobs",                               "groesse": "gross" },
-  { "name": "Schempp-Hirth Flugzeugbau GmbH",                     "branche": "Luft- & Raumfahrt",  "land": "Deutschland",                        "laender": ["Deutschland"],                        "ma": 200,    "ma_label": "51–250",   "umsatz": "n.a.",               "match": 5, "portal": "https://www.schempp-hirth.com/unternehmen/ausbildungsplaetze-und-offene-stellen",                  "groesse": "klein" },
-  { "name": "ALTEN Consulting Services GmbH",                     "branche": "Industrie",          "land": "Deutschland",                        "laender": ["Deutschland"],                        "ma": 57000,  "ma_label": "~57.000",  "umsatz": "n.a.",               "match": 4, "portal": "https://www.alten.com/de/karriere/",                                                           "groesse": "gross" },
-  { "name": "AUDI AG",                                            "branche": "Automotive",         "land": "Deutschland",                        "laender": ["Deutschland"],                        "ma": 88000,  "ma_label": "~88.000",  "umsatz": "~69 Mrd. €",         "match": 5, "portal": "https://www.audi.com/de/careers.html",                                                         "groesse": "gross" },
-  { "name": "Daimler Buses GmbH",                                 "branche": "Automotive",         "land": "Deutschland",                        "laender": ["Deutschland"],                        "ma": 15000,  "ma_label": "~15.000",  "umsatz": "n.a.",               "match": 4, "portal": "https://www.daimlertruck.com/karriere",                                                        "groesse": "gross" },
-  { "name": "FERCHAU GmbH",                                       "branche": "Industrie",          "land": "Deutschland",                        "laender": ["Deutschland"],                        "ma": 8700,   "ma_label": "~8.700",   "umsatz": "n.a.",               "match": 4, "portal": "https://www.ferchau.com/de/de/karriere",                                                      "groesse": "mittel" },
-  { "name": "HESYS TechnicalSystems / Airbus",                    "branche": "Luft- & Raumfahrt",  "land": "Deutschland",                        "laender": ["Deutschland"],                        "ma": 250,    "ma_label": "51–250",   "umsatz": "n.a.",               "match": 4, "portal": "https://hesys-engineering.de/jobs/",                                                          "groesse": "klein" },
-  { "name": "RWTH Aachen University",                             "branche": "Forschung",          "land": "Deutschland",                        "laender": ["Deutschland"],                        "ma": 10000,  "ma_label": "~10.000",  "umsatz": "n.a.",               "match": 5, "portal": "https://www.rwth-aachen.de/go/id/hxz",                                                        "groesse": "gross" },
-  { "name": "Siemens AG",                                         "branche": "Industrie",          "land": "Deutschland",                        "laender": ["Deutschland"],                        "ma": 320000, "ma_label": "~320.000", "umsatz": "~78 Mrd. €",         "match": 4, "portal": "https://jobs.siemens.com/careers",                                                            "groesse": "gross" },
-  { "name": "FEV Group GmbH",                                     "branche": "Automotive Engineering Services", "land": "Deutschland",                "laender": ["Deutschland"],                        "ma": 8000,   "ma_label": "~8.000",   "umsatz": "n.a.",               "match": 5, "portal": "https://www.fev.com/jobs/",                                                                   "groesse": "mittel" },
-  { "name": "TÜV SÜD AG",                                         "branche": "Prüfdienstleistungen", "land": "Deutschland",                       "laender": ["Deutschland"],                        "ma": 26000,  "ma_label": "~26.000",  "umsatz": "~2,7 Mrd. €",        "match": 4, "portal": "https://jobs.tuvsud.com/search?facetFilters=%7B%22cust_brand%22%3A%5B%22T%C3%9CV+S%C3%9CD%22%5D%2C%22jobLocationCountry%22%3A%5B%22Deutschland%22%5D%7D&locale=de_DE", "groesse": "gross" },
-  { "name": "CATL Europe GmbH",                                    "branche": "Batterie / E-Mobility", "land": "Deutschland",                      "laender": ["Deutschland"],                        "ma": 1000,   "ma_label": "~1.000",   "umsatz": "Teil CATL global",   "match": 5, "portal": "https://www.stepstone.de/jobs/catl/in-deutschland.html",                                      "groesse": "mittel" }
-]
-;
-const jobsData = [ 
-  { "title": "Systemingenieur Entwicklung Analytik (m/w/d)", "company": "Polytec GmbH", "ort": "Waldbronn, Deutschland", "land": "Deutschland", "branche": "Messtechnik", "remote": "Hybrid", "sprache": "Deutsch / Englisch", "veroeffentlicht": "aktuell", "alter_tage": 0, "match": 4, "level": "Einsteiger", "anforderungen": "Ingenieur- oder Naturwissenschaftsstudium; optische Systeme, Messdatenauswertung, Produktentwicklung, Prototypenbau und interdisziplinäre Zusammenarbeit; passt zu optischen Prüfständen, Raytracing und hands-on Entwicklung", "link": "https://www.polytec.com/de/karriere/stellenangebote/systemingenieur-entwicklung-analytik", "quelle": "Polytec Careers" },
-  { "title": "Provcellsingenjör / Test Bed Engineer", "company": "AVL MTC Motortestcenter AB", "ort": "Södertälje, Schweden", "land": "Schweden", "branche": "Automotive", "remote": "Onsite", "sprache": "Schwedisch / Englisch", "veroeffentlicht": "vor 2 Tagen", "alter_tage": 2, "match": 5, "level": "Junior (1–3 J.)", "anforderungen": "Prüfstandsbetrieb, Kalibrierung, Messsysteme, Fehleranalyse, Dokumentation und kundennahes Arbeiten; starker Fit zu Testbench-, Validierungs- und Fahrzeugtechnikprofil", "link": "https://jobs.avl.com/job/S%C3%B6dert%C3%A4lje-Provcellsingenj%C3%B6r-Test-Bed-Engineer/1376586733/", "quelle": "AVL Careers" },
-  { "title": "Wissenschaftliche/r Mitarbeiter/in (w/m/d) Maschinenbau – Thermodynamik / Strömungsmechanik", "company": "RWTH Aachen University", "ort": "Aachen, Deutschland", "land": "Deutschland", "branche": "Forschung", "remote": "Hybrid", "sprache": "Deutsch", "veroeffentlicht": "vor 17 Stunden", "alter_tage": 0, "match": 5, "level": "Einsteiger", "anforderungen": "M.Sc. Maschinenbau; Strömungsmechanik/Thermodynamik; Erfahrung in Simulation/Experiment", "link": "https://www.xing.com/jobs/aachen-wis-sen-schaft-li-che-ar-ter-ma-schi-nen-bau-schwer-punk-ten-ther-mo-dy-mik-stroe-mungs-me-cha-nik-tme-156081337", "quelle": "XING" },
-  { "title": "Wiss. Mitarbeiter*in (d/m/w) – Optische Strömungsdiagnostik", "company": "RWTH Aachen University", "ort": "Aachen, Deutschland", "land": "Deutschland", "branche": "Forschung", "remote": "Hybrid", "sprache": "Deutsch", "veroeffentlicht": "vor 17 Stunden", "alter_tage": 0, "match": 5, "level": "Einsteiger", "anforderungen": "M.Sc. Maschinenbau/Physik; Strömungsdiagnostik; Experimentelle Methoden (passt zu Sebastians Forschungsthema Tropfenaufprall)", "link": "https://www.xing.com/jobs/aachen-wis-sen-schaft-li-che-ar-ter-for-schung-ent-wick-lung-be-reich-op-ti-scher-stroe-mungs-dia-gno-tik-tme-156081363", "quelle": "XING" },
-  { "title": "Ingenieur CFD-Simulation & numerische Optimierung", "company": "SHENGU Europäisches Forschungszentrum GmbH", "ort": "Aachen, Deutschland", "land": "Deutschland", "branche": "Forschung", "remote": "Hybrid", "sprache": "Englisch", "veroeffentlicht": "vor 3 Tagen", "alter_tage": 3, "match": 4, "level": "Junior (1–3 J.)", "anforderungen": "Master Strömungsmechanik; 1–3 J. CFD-Erfahrung; STAR-CCM+; Python; Turbomaschinen v. Vorteil; Englisch", "link": "https://www.stepstone.de/stellenangebote--Ingenieur-CFD-Simulation-numerische-Optimierung-Aachen-SHENGU-Europaeisches-Forschungszentrum-GmbH--14234649-inline.html", "quelle": "StepStone" },
-  { "title": "Ingenieur Aerodynamik & Schaufelauslegung", "company": "SHENGU Europäisches Forschungszentrum GmbH", "ort": "Aachen, Deutschland", "land": "Deutschland", "branche": "Forschung", "remote": "Hybrid", "sprache": "Englisch", "veroeffentlicht": "vor 3 Tagen", "alter_tage": 3, "match": 4, "level": "Einsteiger", "anforderungen": "Master Maschinenbau/Luft- und Raumfahrt; Aerodynamik; CFD; Turbomaschinen", "link": "https://www.stepstone.de/stellenangebote--Ingenieur-Aerodynamik-Schaufelauslegung-Aachen-SHENGU-Europaeisches-Forschungszentrum-GmbH--14234650-inline.html", "quelle": "StepStone" },
-  { "title": "CFD Simulation Engineer (m/w/d) – Aeroakustik & Turbomaschinen", "company": "Wingfan Ltd. & Co. KG", "ort": "Hamburg, Deutschland", "land": "Deutschland", "branche": "Industrie", "remote": "Hybrid", "sprache": "Deutsch", "veroeffentlicht": "vor 2 Wochen", "alter_tage": 14, "match": 4, "level": "Junior (1–3 J.)", "anforderungen": "Master Maschinenbau/Strömungsmechanik; STAR-CCM+; CFD-Aeroakustik; FSI; Deutsch C1", "link": "https://www.stepstone.de/stellenangebote--CFD-Simulation-Engineer-m-w-d-Aeroakustik-Turbomaschinen-Hamburg-Wingfan-Ltd-Co-KG--14183956-inline.html", "quelle": "StepStone" },
-  { "title": "Aerodynamic Design & Analysis Engineer (m/w/d) – Airbus", "company": "HESYS TechnicalSystems / Airbus", "ort": "Manching, Deutschland", "land": "Deutschland", "branche": "Luft- & Raumfahrt", "remote": "Onsite", "sprache": "Englisch", "veroeffentlicht": "aktuell", "alter_tage": 5, "match": 4, "level": "Junior (1–3 J.)", "anforderungen": "Master Maschinenbau/Luft- und Raumfahrt; Aerodynamik-Analyse; Arbeitnehmerueberlassung bzw. Engineering-Dienstleister im Airbus-Umfeld; fachlich passend, aber nicht als direkte Airbus-Bewerbung behandeln", "link": "https://hesys-engineering.de/jobs/", "quelle": "HESYS Careers" },
-  { "title": "CFD Software Engineer", "company": "Siemens AG", "ort": "Hamburg, Deutschland", "land": "Deutschland", "branche": "Industrie", "remote": "Hybrid", "sprache": "Englisch", "veroeffentlicht": "aktuell", "alter_tage": 7, "match": 4, "level": "Junior (1–3 J.)", "anforderungen": "M.Sc. Maschinenbau/Computational Mechanics; CFD-Softwareentwicklung; C++; Python", "link": "https://de.indeed.com/viewjob?jk=2bc6064a39cc06e2", "quelle": "Indeed" },
-  { "title": "Propulsion Design Engineer (m/f/d)", "company": "Isar Aerospace SE", "ort": "München, Deutschland", "land": "Deutschland", "branche": "Luft- & Raumfahrt", "remote": "Hybrid", "sprache": "Englisch", "veroeffentlicht": "aktuell", "alter_tage": 6, "match": 4, "level": "Einsteiger", "anforderungen": "M.Sc. Maschinenbau/Luft- und Raumfahrt; Fluid Dynamics; Combustion; Triebwerke; Englisch fließend", "link": "https://job-boards.greenhouse.io/isaraerospace", "quelle": "Isar Aerospace Careers" },
-  { "title": "Berechnungsingenieur – Strömungsmechanik (m/w/d)", "company": "Rheinmetall AG", "ort": "Unterlüß bei Celle, Deutschland", "land": "Deutschland", "branche": "Verteidigung", "remote": "Onsite", "sprache": "Deutsch", "veroeffentlicht": "vor 1 Woche", "alter_tage": 7, "match": 3, "level": "Junior (1–3 J.)", "anforderungen": "Maschinenbaustudium Schwerpunkt Strömungsmechanik; CFD (TAU); Python, C/C++; Außenballistik; Linux", "link": "https://www.stepstone.de/stellenangebote--Berechnungsingenieur-Stroemungsmechanik-m-w-d-Unterluess-bei-Celle-Rheinmetall-Waffe-Munition-GmbH--13764707-inline.html", "quelle": "StepStone" },
-  { "title": "Entwicklungsingenieur (m/w/d) – Flugkörperkonzeption, Aerodynamik", "company": "Diehl Defence GmbH & Co. KG", "ort": "Überlingen am Bodensee, Deutschland", "land": "Deutschland", "branche": "Verteidigung", "remote": "Onsite", "sprache": "Deutsch", "veroeffentlicht": "vor 4 Tagen", "alter_tage": 4, "match": 3, "level": "Junior (1–3 J.)", "anforderungen": "Master Maschinenbau/Luft- und Raumfahrt; Aerodynamik; Flugmechanik; Konzeptionierung Lenkflugkörper", "link": "https://www.stepstone.de/stellenangebote--Entwicklungsingenieur-m-w-d-fuer-Flugkoerperkonzeption-Aerodynamik-und-Flugmechanik-Ueberlingen-am-Bodensee-Diehl-Defence-GmbH-Co-KG--14227457-inline.html", "quelle": "StepStone" },
-  { "title": "Simulationsingenieur CFD / Thermofluiddynamik (all gender)", "company": "ALTEN Consulting Services GmbH", "ort": "Kaufering, Deutschland", "land": "Deutschland", "branche": "Industrie", "remote": "Hybrid", "sprache": "Deutsch", "veroeffentlicht": "vor 1 Woche", "alter_tage": 7, "match": 4, "level": "Einsteiger", "anforderungen": "Master Maschinenbau/Thermodynamik; CFD; Automotive-Erfahrung von Vorteil", "link": "https://www.stepstone.de/stellenangebote--Simulationsingenieur-CFD-Thermofluiddynamik-all-gender-Kaufering-ALTEN-Consulting-Services-GmbH--14147327-inline.html", "quelle": "StepStone" },
-  { "title": "CFD / Thermohydraulik Ingenieur (m/w/d) – Reaktorsysteme", "company": "Framatome SAS", "ort": "Erlangen, Deutschland", "land": "Deutschland", "branche": "Energie", "remote": "Hybrid", "sprache": "Deutsch", "veroeffentlicht": "aktuell", "alter_tage": 5, "match": 5, "level": "Einsteiger", "anforderungen": "Master Maschinenbau/Energietechnik; CFD (ANSYS Fluent/CFX); Thermohydraulik Reaktoranlagen; Deutsch + Englisch fließend", "link": "https://www.framatome.com/en/jobseekers/job-offers/", "quelle": "Framatome Careers" },
-  { "title": "Thermal-Hydraulic Analysis Engineer (m/f/d)", "company": "Westinghouse Electric Company", "ort": "Västerås, Schweden", "land": "Schweden", "branche": "Energie", "remote": "Hybrid", "sprache": "Englisch", "veroeffentlicht": "aktuell", "alter_tage": 7, "match": 4, "level": "Junior (1–3 J.)", "anforderungen": "M.Sc. Nuclear/Mechanical Engineering; Thermohydraulik; RELAP5, TRACE oder CFD; Englisch fließend", "link": "https://careers.westinghousenuclear.com/", "quelle": "Westinghouse Careers" },
-  { "title": "Simulation Engineer – Turbines & Power Generation (m/f/d)", "company": "GE Vernova", "ort": "Mannheim, Deutschland", "land": "Deutschland", "branche": "Energie", "remote": "Hybrid", "sprache": "Englisch", "veroeffentlicht": "aktuell", "alter_tage": 6, "match": 4, "level": "Junior (1–3 J.)", "anforderungen": "M.Sc. Maschinenbau/Energietechnik; CFD Turbinen-/Strömungssimulation; ANSYS Fluent; Englisch fließend", "link": "https://jobs.gecareers.com/vernova/global/en/search.html?keywords=CFD+simulation+engineer&location=Germany", "quelle": "GE Vernova Careers" },
-  { "title": "NVH Engineer (f/m/d)", "company": "MAN Truck & Bus Group", "ort": "München, Deutschland", "land": "Deutschland", "branche": "NVH / Akustik", "remote": "Hybrid", "sprache": "Deutsch / Englisch", "veroeffentlicht": "vor 6 Tagen", "alter_tage": 6, "match": 5, "level": "Junior (1–3 J.)", "anforderungen": "NVH-Entwicklung im Nutzfahrzeugumfeld; Schwingung/Akustik; Versuchs- und Simulationsnaehe; sehr guter Fit zu Fahrzeugdynamik- und NVH-Schwerpunkt", "link": "https://www.stepstone.de/stellenangebote--NVH-Engineer-f-m-d-Muenchen-MAN-Truck-Bus-Group--14190061-inline.html", "quelle": "StepStone" },
-  { "title": "NVH-Ingenieur / Akustik-Entwickler (m/w/d)", "company": "AUDI AG", "ort": "Ingolstadt, Deutschland", "land": "Deutschland", "branche": "NVH / Akustik", "remote": "Hybrid", "sprache": "Deutsch", "veroeffentlicht": "aktuell", "alter_tage": 4, "match": 5, "level": "Einsteiger", "anforderungen": "M.Sc. Maschinenbau; Fahrzeugdynamik/NVH/Akustik; Simulationskenntnisse; Direkteinstieg nach Studienabschluss willkommen", "link": "https://www.audi-jobs.com/de/home", "quelle": "Audi Careers" },
-  { "title": "Akustik- und Schwingungsingenieur (m/w/d)", "company": "Müller-BBM GmbH", "ort": "Planegg, Deutschland", "land": "Deutschland", "branche": "NVH / Akustik", "remote": "Hybrid", "sprache": "Deutsch", "veroeffentlicht": "aktuell", "alter_tage": 5, "match": 5, "level": "Einsteiger", "anforderungen": "M.Sc. Maschinenbau/Physik; Akustik, Schwingungsanalyse, NVH; experimentelle Messtechnik; sehr gutes Deutsch", "link": "https://www.mbbm-ind.com/de/karriere/stellenangebote", "quelle": "Müller-BBM Careers" },
-  { "title": "Entwicklungsingenieur NVH-Simulation (m/w/d)", "company": "AVL List GmbH", "ort": "Graz, Österreich", "land": "Österreich", "branche": "NVH / Akustik", "remote": "Hybrid", "sprache": "Deutsch", "veroeffentlicht": "aktuell", "alter_tage": 3, "match": 5, "level": "Einsteiger", "anforderungen": "M.Sc. Maschinenbau; Fahrzeugdynamik/NVH-Simulation; FEM/MBS; Direkteinstieg; Englisch willkommen", "link": "https://www.avl.com/en/career", "quelle": "AVL Careers" },
-  { "title": "Versuchsingenieur Optische Messtechnik (m/w/d)", "company": "Polytec GmbH", "ort": "Waldbronn, Deutschland", "land": "Deutschland", "branche": "Messtechnik", "remote": "Hybrid", "sprache": "Deutsch", "veroeffentlicht": "aktuell", "alter_tage": 6, "match": 5, "level": "Einsteiger", "anforderungen": "M.Sc. Maschinenbau/Physik; optische Messtechnik (Laser, Vibrometrie, Schlieren); Bildverarbeitung (passt zu Schlieren-Thesis + ISTM-Forschung)", "link": "https://www.polytec.com/de/karriere/stellenangebote", "quelle": "Polytec Careers" },
-  { "title": "Measurement & Test Engineer (m/f/d) – Fluid & Thermal", "company": "Hottinger Brüel & Kjær (HBK)", "ort": "Darmstadt, Deutschland", "land": "Deutschland", "branche": "Messtechnik", "remote": "Hybrid", "sprache": "Englisch", "veroeffentlicht": "aktuell", "alter_tage": 7, "match": 4, "level": "Einsteiger", "anforderungen": "M.Sc. Maschinenbau/Physik; Messtechnik; Signalverarbeitung; experimentelle Methodik; Englisch fließend", "link": "https://www.hbkworld.com/en/careers", "quelle": "HBK Careers" },
-  { "title": "Ingenieur Konstruktion & Aerodynamik Segelflugzeug (m/w/d)", "company": "Schempp-Hirth Flugzeugbau GmbH", "ort": "Kirchheim unter Teck, Deutschland", "land": "Deutschland", "branche": "Luft- & Raumfahrt", "remote": "Onsite", "sprache": "Deutsch", "veroeffentlicht": "aktuell", "alter_tage": 8, "match": 5, "level": "Einsteiger", "anforderungen": "M.Sc. Maschinenbau/Luft- und Raumfahrt; Aerodynamik; Konstruktion CATIA/Creo; Segelflugzeugbau oder Pilotenerfahrung sehr willkommen (Akaflieg-Profil passt ideal)", "link": "https://www.schempp-hirth.com/unternehmen/ausbildungsplaetze-und-offene-stellen", "quelle": "Schempp-Hirth Careers" },
-  { "title": "Versuchsingenieur (m/w/d) Applikation Sportwagen", "company": "FERCHAU GmbH", "ort": "Stuttgart, Deutschland", "land": "Deutschland", "branche": "Automotive", "remote": "Hybrid", "sprache": "Deutsch", "veroeffentlicht": "vor 4 Tagen", "alter_tage": 4, "match": 5, "level": "Einsteiger", "anforderungen": "M.Sc. Maschinenbau/Fahrzeugtechnik; Fahrzeugversuch; Applikation Sportwagen; Messtechnik; Direkteinstieg", "link": "https://www.stepstone.de/stellenangebote--Versuchsingenieur-m-w-d-Applikation-Sportwagen-Stuttgart-FERCHAU-Connecting-People-and-Technologies--10478768-inline.html", "quelle": "StepStone" },
-  { "title": "Versuchsingenieur Messtechnik (m/w/d)", "company": "FERCHAU GmbH", "ort": "Reutlingen, Deutschland", "land": "Deutschland", "branche": "Messtechnik", "remote": "Hybrid", "sprache": "Deutsch", "veroeffentlicht": "vor 4 Tagen", "alter_tage": 4, "match": 4, "level": "Einsteiger", "anforderungen": "M.Sc. Maschinenbau; Messtechnik; Prüfstandsarbeit; Signalverarbeitung; passt zu ISTM-Versuchserfahrung und Schlieren-Thesis", "link": "https://www.stepstone.de/stellenangebote--Versuchsingenieur-Messtechnik-m-w-d-Reutlingen-FERCHAU-Connecting-People-and-Technologies--7837560-inline.html", "quelle": "StepStone" },
-  { "title": "Versuchsingenieur (w/m/d) Gesamtfahrzeugerprobung", "company": "Daimler Buses GmbH", "ort": "Neu-Ulm / Mannheim, Deutschland", "land": "Deutschland", "branche": "Automotive", "remote": "Hybrid", "sprache": "Deutsch", "veroeffentlicht": "vor 1 Woche", "alter_tage": 7, "match": 4, "level": "Einsteiger", "anforderungen": "M.Sc. Maschinenbau/Fahrzeugtechnik; Gesamtfahrzeugerprobung; Messtechnik; Daimler Buses (eCitaro, Setra)", "link": "https://www.stepstone.de/stellenangebote--Versuchsingenieur-w-m-d-Kundenfahrerprobung-und-Gesamtfahrzeugerprobung-am-Standort-Neu-Ulm-oder-Mannheim-Neu-Ulm-Mannheim-Daimler-Buses-GmbH--14200871-inline.html", "quelle": "StepStone" },
-  { "title": "Battery Safety Engineer (m/f/d)", "company": "CATL Europe GmbH", "ort": "München, Deutschland", "land": "Deutschland", "branche": "Batterie / E-Mobility", "remote": "Hybrid", "sprache": "Englisch", "veroeffentlicht": "aktuell", "alter_tage": 3, "match": 5, "level": "Einsteiger", "anforderungen": "M.Sc. Maschinenbau/Elektrotechnik; Li-Ion Batteriesicherheit; Thermal Runaway Testing; Prüfstandserfahrung; Englisch fließend – direkter Fit zur Masterarbeit und Werkstudium bei Porsche Battery Safety", "link": "https://www.stepstone.de/jobs/catl/in-deutschland.html", "quelle": "StepStone" },
-  { "title": "Prüfingenieur Batteriesicherheit / Cell Testing (m/w/d)", "company": "TÜV SÜD AG", "ort": "München / Garching, Deutschland", "land": "Deutschland", "branche": "Prüfdienstleistungen", "remote": "Hybrid", "sprache": "Deutsch", "veroeffentlicht": "aktuell", "alter_tage": 5, "match": 4, "level": "Einsteiger", "anforderungen": "M.Sc. Maschinenbau/Elektrotechnik; Li-Ion Zelltests, UN38.3, IEC 62133; Prüfstand; Direkteinstieg – Masterarbeit (Thermal Runaway Prüfstand) und Porsche-Erfahrung sind hervorragende Voraussetzungen", "link": "https://jobs.tuvsud.com/search?facetFilters=%7B%22cust_brand%22%3A%5B%22T%C3%9CV+S%C3%9CD%22%5D%2C%22jobLocationCountry%22%3A%5B%22Deutschland%22%5D%7D&locale=de_DE", "quelle": "TÜV SÜD Careers" },
-  { "title": "Test & Validation Engineer – Powertrain / Battery (m/w/d)", "company": "FEV Group GmbH", "ort": "Aachen / Stuttgart, Deutschland", "land": "Deutschland", "branche": "Automotive Engineering Services", "remote": "Hybrid", "sprache": "Deutsch / Englisch", "veroeffentlicht": "aktuell", "alter_tage": 4, "match": 5, "level": "Einsteiger", "anforderungen": "M.Sc. Maschinenbau; Prüfstand, Validierung, Messtechnik; E-Antrieb / Batterie von Vorteil; Porsche-Erfahrung willkommen; Direkteinstieg", "link": "https://www.fev.com/jobs/", "quelle": "FEV Careers" }
-]
-;
+  {
+    "name": "Airbus SE",
+    "branche": "Luft- & Raumfahrt",
+    "land": "Deutschland / Frankreich / Spanien",
+    "laender": [
+      "Deutschland",
+      "Frankreich",
+      "Spanien"
+    ],
+    "ma": 135000,
+    "ma_label": "~135.000",
+    "umsatz": "~65 Mrd. €",
+    "match": 5,
+    "portal": "https://www.airbus.com/en/careers",
+    "groesse": "gross"
+  },
+  {
+    "name": "Siemens Energy AG",
+    "branche": "Energie",
+    "land": "Deutschland",
+    "laender": [
+      "Deutschland"
+    ],
+    "ma": 100000,
+    "ma_label": "~100.000",
+    "umsatz": "~35 Mrd. €",
+    "match": 5,
+    "portal": "https://jobs.siemens-energy.com/",
+    "groesse": "gross"
+  },
+  {
+    "name": "BMW AG",
+    "branche": "Automotive",
+    "land": "Deutschland",
+    "laender": [
+      "Deutschland"
+    ],
+    "ma": 150000,
+    "ma_label": "~150.000",
+    "umsatz": "~142 Mrd. €",
+    "match": 4,
+    "portal": "https://www.bmwgroup.jobs/de/",
+    "groesse": "gross"
+  },
+  {
+    "name": "Porsche AG",
+    "branche": "Automotive",
+    "land": "Deutschland",
+    "laender": [
+      "Deutschland"
+    ],
+    "ma": 40000,
+    "ma_label": "~40.000",
+    "umsatz": "~40 Mrd. €",
+    "match": 5,
+    "portal": "https://www.porsche.com/germany/aboutporsche/jobs/",
+    "groesse": "gross"
+  },
+  {
+    "name": "Porsche Engineering Group GmbH",
+    "branche": "Automotive Engineering Services",
+    "land": "Deutschland",
+    "laender": [
+      "Deutschland"
+    ],
+    "ma": 2000,
+    "ma_label": "~2.000",
+    "umsatz": "n.a.",
+    "match": 5,
+    "portal": "https://www.porscheengineering.com/peg/de/career/jobs/",
+    "groesse": "mittel"
+  },
+  {
+    "name": "IAV GmbH",
+    "branche": "Automotive Engineering Services",
+    "land": "Deutschland",
+    "laender": [
+      "Deutschland"
+    ],
+    "ma": 6800,
+    "ma_label": "~6.800",
+    "umsatz": "n.a.",
+    "match": 5,
+    "portal": "https://www.iav.com/de/karriere/",
+    "groesse": "mittel"
+  },
+  {
+    "name": "ATESTEO GmbH & Co. KG",
+    "branche": "Automotive Engineering Services",
+    "land": "Deutschland",
+    "laender": [
+      "Deutschland"
+    ],
+    "ma": 800,
+    "ma_label": "~800",
+    "umsatz": "n.a.",
+    "match": 5,
+    "portal": "https://atesteo.com/karriere-jobs/",
+    "groesse": "mittel"
+  },
+  {
+    "name": "Kistler Group",
+    "branche": "Messtechnik",
+    "land": "Deutschland / Schweiz",
+    "laender": [
+      "Deutschland"
+    ],
+    "ma": 2200,
+    "ma_label": "~2.200",
+    "umsatz": "~460 Mio. CHF",
+    "match": 5,
+    "portal": "https://www.kistler.com/DE/de/jobs-und-karriere/career",
+    "groesse": "mittel"
+  },
+  {
+    "name": "Bosch Engineering GmbH",
+    "branche": "Automotive Engineering Services",
+    "land": "Deutschland",
+    "laender": [
+      "Deutschland"
+    ],
+    "ma": 3300,
+    "ma_label": "~3.300",
+    "umsatz": "Teil Bosch",
+    "match": 4,
+    "portal": "https://www.bosch.de/karriere/",
+    "groesse": "mittel"
+  },
+  {
+    "name": "Mercedes-Benz AG",
+    "branche": "Automotive",
+    "land": "Deutschland",
+    "laender": [
+      "Deutschland"
+    ],
+    "ma": 160000,
+    "ma_label": "~160.000",
+    "umsatz": "~153 Mrd. €",
+    "match": 4,
+    "portal": "https://www.mercedes-benz.com/de/career/",
+    "groesse": "gross"
+  },
+  {
+    "name": "MAHLE GmbH",
+    "branche": "Automotive",
+    "land": "Deutschland",
+    "laender": [
+      "Deutschland"
+    ],
+    "ma": 72000,
+    "ma_label": "~72.000",
+    "umsatz": "~12 Mrd. €",
+    "match": 4,
+    "portal": "https://jobs.mahle.com/",
+    "groesse": "gross"
+  },
+  {
+    "name": "Voith GmbH & Co. KGaA",
+    "branche": "Industrie",
+    "land": "Deutschland",
+    "laender": [
+      "Deutschland"
+    ],
+    "ma": 22000,
+    "ma_label": "~22.000",
+    "umsatz": "~5 Mrd. €",
+    "match": 4,
+    "portal": "https://www.voith.com/de/unternehmen/karriere.html",
+    "groesse": "gross"
+  },
+  {
+    "name": "MTU Aero Engines AG",
+    "branche": "Luft- & Raumfahrt",
+    "land": "Deutschland",
+    "laender": [
+      "Deutschland"
+    ],
+    "ma": 12000,
+    "ma_label": "~12.000",
+    "umsatz": "~7 Mrd. €",
+    "match": 5,
+    "portal": "https://www.mtu.de/de/karriere/",
+    "groesse": "gross"
+  },
+  {
+    "name": "DLR – Deutsches Zentrum für Luft- und Raumfahrt",
+    "branche": "Forschung",
+    "land": "Deutschland",
+    "laender": [
+      "Deutschland"
+    ],
+    "ma": 10000,
+    "ma_label": "~10.000",
+    "umsatz": "~1 Mrd. € (Budget)",
+    "match": 5,
+    "portal": "https://www.dlr.de/de/karriere",
+    "groesse": "gross"
+  },
+  {
+    "name": "Rheinmetall AG",
+    "branche": "Verteidigung",
+    "land": "Deutschland",
+    "laender": [
+      "Deutschland"
+    ],
+    "ma": 35000,
+    "ma_label": "~35.000",
+    "umsatz": "~10 Mrd. €",
+    "match": 3,
+    "portal": "https://www.rheinmetall.com/de/karriere",
+    "groesse": "gross"
+  },
+  {
+    "name": "Fraunhofer-Gesellschaft",
+    "branche": "Forschung",
+    "land": "Deutschland",
+    "laender": [
+      "Deutschland"
+    ],
+    "ma": 32000,
+    "ma_label": "~32.000",
+    "umsatz": "~3 Mrd. € (Budget)",
+    "match": 5,
+    "portal": "https://www.fraunhofer.de/de/jobs-und-karriere.html",
+    "groesse": "gross"
+  },
+  {
+    "name": "Isar Aerospace SE",
+    "branche": "Luft- & Raumfahrt",
+    "land": "Deutschland",
+    "laender": [
+      "Deutschland"
+    ],
+    "ma": 700,
+    "ma_label": "~700",
+    "umsatz": "n.a. (Start-up)",
+    "match": 4,
+    "portal": "https://www.isaraerospace.com/careers",
+    "groesse": "mittel"
+  },
+  {
+    "name": "Wingfan Ltd. & Co. KG",
+    "branche": "Industrie",
+    "land": "Deutschland",
+    "laender": [
+      "Deutschland"
+    ],
+    "ma": 100,
+    "ma_label": "51–250",
+    "umsatz": "n.a.",
+    "match": 4,
+    "portal": "https://www.stepstone.de/cmp/de/Wingfan-Ltd-Co-KG-425087/jobs.html",
+    "groesse": "klein"
+  },
+  {
+    "name": "SHENGU Europäisches Forschungszentrum GmbH",
+    "branche": "Forschung",
+    "land": "Deutschland",
+    "laender": [
+      "Deutschland"
+    ],
+    "ma": 50,
+    "ma_label": "<100",
+    "umsatz": "n.a.",
+    "match": 4,
+    "portal": "https://www.stepstone.de/cmp/de/shengu-europaeisches-forschungszentrum-gmbh-227497/jobs.html",
+    "groesse": "klein"
+  },
+  {
+    "name": "Diehl Defence GmbH & Co. KG",
+    "branche": "Verteidigung",
+    "land": "Deutschland",
+    "laender": [
+      "Deutschland"
+    ],
+    "ma": 3000,
+    "ma_label": "~3.000",
+    "umsatz": "~1,5 Mrd. €",
+    "match": 3,
+    "portal": "https://www.diehl.com/de/karriere.html",
+    "groesse": "mittel"
+  },
+  {
+    "name": "Vestas Wind Systems A/S",
+    "branche": "Energie",
+    "land": "Dänemark",
+    "laender": [
+      "Dänemark"
+    ],
+    "ma": 29000,
+    "ma_label": "~29.000",
+    "umsatz": "~16 Mrd. €",
+    "match": 4,
+    "portal": "https://www.vestas.com/en/careers",
+    "groesse": "gross"
+  },
+  {
+    "name": "BORA Gruppe Deutschland",
+    "branche": "Hausgeräte",
+    "land": "Österreich",
+    "laender": [
+      "Österreich"
+    ],
+    "ma": 2000,
+    "ma_label": "~2.000",
+    "umsatz": "~500 Mio. €",
+    "match": 3,
+    "portal": "https://www.bora.com/de-de/karriere",
+    "groesse": "mittel"
+  },
+  {
+    "name": "Rolls-Royce Deutschland Ltd & Co KG",
+    "branche": "Luft- & Raumfahrt",
+    "land": "Deutschland",
+    "laender": [
+      "Deutschland"
+    ],
+    "ma": 3500,
+    "ma_label": "~3.500",
+    "umsatz": "Teil Rolls-Royce",
+    "match": 5,
+    "portal": "https://careers.rolls-royce.com/",
+    "groesse": "mittel"
+  },
+  {
+    "name": "TRUMPF SE + Co. KG",
+    "branche": "Industrie",
+    "land": "Deutschland",
+    "laender": [
+      "Deutschland"
+    ],
+    "ma": 20000,
+    "ma_label": "~20.000",
+    "umsatz": "~5,4 Mrd. €",
+    "match": 3,
+    "portal": "https://www.trumpf.com/de_DE/unternehmen/karriere/",
+    "groesse": "gross"
+  },
+  {
+    "name": "Framatome SAS",
+    "branche": "Energie",
+    "land": "Frankreich / Deutschland",
+    "laender": [
+      "Frankreich",
+      "Deutschland"
+    ],
+    "ma": 20000,
+    "ma_label": "~20.000",
+    "umsatz": "~4 Mrd. €",
+    "match": 5,
+    "portal": "https://www.framatome.com/en/human-resources/",
+    "groesse": "gross"
+  },
+  {
+    "name": "Westinghouse Electric Company",
+    "branche": "Energie",
+    "land": "Schweden / Belgien",
+    "laender": [
+      "Schweden",
+      "Belgien"
+    ],
+    "ma": 12000,
+    "ma_label": "~12.000",
+    "umsatz": "~3 Mrd. €",
+    "match": 4,
+    "portal": "https://careers.westinghousenuclear.com/",
+    "groesse": "gross"
+  },
+  {
+    "name": "GE Vernova",
+    "branche": "Energie",
+    "land": "Deutschland / Frankreich / EU",
+    "laender": [
+      "Deutschland",
+      "Frankreich"
+    ],
+    "ma": 80000,
+    "ma_label": "~80.000",
+    "umsatz": "~34 Mrd. €",
+    "match": 4,
+    "portal": "https://jobs.gecareers.com/vernova/global/en",
+    "groesse": "gross"
+  },
+  {
+    "name": "Müller-BBM GmbH",
+    "branche": "NVH / Akustik",
+    "land": "Deutschland",
+    "laender": [
+      "Deutschland"
+    ],
+    "ma": 600,
+    "ma_label": "~600",
+    "umsatz": "~100 Mio. €",
+    "match": 5,
+    "portal": "https://www.muellerbbm.de/karriere/",
+    "groesse": "klein"
+  },
+  {
+    "name": "HEAD acoustics GmbH",
+    "branche": "NVH / Akustik",
+    "land": "Deutschland",
+    "laender": [
+      "Deutschland"
+    ],
+    "ma": 500,
+    "ma_label": "~500",
+    "umsatz": "n.a.",
+    "match": 5,
+    "portal": "https://www.head-acoustics.com/de/karriere",
+    "groesse": "klein"
+  },
+  {
+    "name": "AVL List GmbH",
+    "branche": "NVH / Akustik",
+    "land": "Österreich",
+    "laender": [
+      "Österreich"
+    ],
+    "ma": 14000,
+    "ma_label": "~14.000",
+    "umsatz": "~2,3 Mrd. €",
+    "match": 5,
+    "portal": "https://www.avl.com/de/career",
+    "groesse": "gross"
+  },
+  {
+    "name": "Polytec GmbH",
+    "branche": "Messtechnik",
+    "land": "Deutschland",
+    "laender": [
+      "Deutschland"
+    ],
+    "ma": 700,
+    "ma_label": "~700",
+    "umsatz": "n.a.",
+    "match": 5,
+    "portal": "https://www.polytec.com/de/karriere/",
+    "groesse": "klein"
+  },
+  {
+    "name": "Hottinger Brüel & Kjær (HBK)",
+    "branche": "Messtechnik",
+    "land": "Deutschland / Dänemark",
+    "laender": [
+      "Deutschland",
+      "Dänemark"
+    ],
+    "ma": 3500,
+    "ma_label": "~3.500",
+    "umsatz": "n.a.",
+    "match": 4,
+    "portal": "https://www.hbkworld.com/de/karriere",
+    "groesse": "mittel"
+  },
+  {
+    "name": "Carl Zeiss AG",
+    "branche": "Messtechnik",
+    "land": "Deutschland",
+    "laender": [
+      "Deutschland"
+    ],
+    "ma": 40000,
+    "ma_label": "~40.000",
+    "umsatz": "~10 Mrd. €",
+    "match": 4,
+    "portal": "https://www.zeiss.com/corporate/de_de/careers.html",
+    "groesse": "gross"
+  },
+  {
+    "name": "MAN Truck & Bus Group",
+    "branche": "Automotive",
+    "land": "Deutschland",
+    "laender": [
+      "Deutschland"
+    ],
+    "ma": 35000,
+    "ma_label": "~35.000",
+    "umsatz": "n.a.",
+    "match": 4,
+    "portal": "https://www.stepstone.de/cmp/de/man-truck-%26-bus-group-29656/jobs",
+    "groesse": "gross"
+  },
+  {
+    "name": "Schempp-Hirth Flugzeugbau GmbH",
+    "branche": "Luft- & Raumfahrt",
+    "land": "Deutschland",
+    "laender": [
+      "Deutschland"
+    ],
+    "ma": 200,
+    "ma_label": "51–250",
+    "umsatz": "n.a.",
+    "match": 5,
+    "portal": "https://www.schempp-hirth.com/unternehmen/ausbildungsplaetze-und-offene-stellen",
+    "groesse": "klein"
+  },
+  {
+    "name": "ALTEN Consulting Services GmbH",
+    "branche": "Industrie",
+    "land": "Deutschland",
+    "laender": [
+      "Deutschland"
+    ],
+    "ma": 57000,
+    "ma_label": "~57.000",
+    "umsatz": "n.a.",
+    "match": 4,
+    "portal": "https://www.alten.com/de/karriere/",
+    "groesse": "gross"
+  },
+  {
+    "name": "AUDI AG",
+    "branche": "Automotive",
+    "land": "Deutschland",
+    "laender": [
+      "Deutschland"
+    ],
+    "ma": 88000,
+    "ma_label": "~88.000",
+    "umsatz": "~69 Mrd. €",
+    "match": 5,
+    "portal": "https://www.audi.com/de/careers.html",
+    "groesse": "gross"
+  },
+  {
+    "name": "Daimler Buses GmbH",
+    "branche": "Automotive",
+    "land": "Deutschland",
+    "laender": [
+      "Deutschland"
+    ],
+    "ma": 15000,
+    "ma_label": "~15.000",
+    "umsatz": "n.a.",
+    "match": 4,
+    "portal": "https://www.daimlertruck.com/karriere",
+    "groesse": "gross"
+  },
+  {
+    "name": "FERCHAU GmbH",
+    "branche": "Industrie",
+    "land": "Deutschland",
+    "laender": [
+      "Deutschland"
+    ],
+    "ma": 8700,
+    "ma_label": "~8.700",
+    "umsatz": "n.a.",
+    "match": 4,
+    "portal": "https://www.ferchau.com/de/de/karriere",
+    "groesse": "mittel"
+  },
+  {
+    "name": "HESYS TechnicalSystems / Airbus",
+    "branche": "Luft- & Raumfahrt",
+    "land": "Deutschland",
+    "laender": [
+      "Deutschland"
+    ],
+    "ma": 250,
+    "ma_label": "51–250",
+    "umsatz": "n.a.",
+    "match": 4,
+    "portal": "https://hesys-engineering.de/jobs/",
+    "groesse": "klein"
+  },
+  {
+    "name": "RWTH Aachen University",
+    "branche": "Forschung",
+    "land": "Deutschland",
+    "laender": [
+      "Deutschland"
+    ],
+    "ma": 10000,
+    "ma_label": "~10.000",
+    "umsatz": "n.a.",
+    "match": 5,
+    "portal": "https://www.rwth-aachen.de/go/id/hxz",
+    "groesse": "gross"
+  },
+  {
+    "name": "Siemens AG",
+    "branche": "Industrie",
+    "land": "Deutschland",
+    "laender": [
+      "Deutschland"
+    ],
+    "ma": 320000,
+    "ma_label": "~320.000",
+    "umsatz": "~78 Mrd. €",
+    "match": 4,
+    "portal": "https://jobs.siemens.com/careers",
+    "groesse": "gross"
+  },
+  {
+    "name": "FEV Group GmbH",
+    "branche": "Automotive Engineering Services",
+    "land": "Deutschland",
+    "laender": [
+      "Deutschland"
+    ],
+    "ma": 8000,
+    "ma_label": "~8.000",
+    "umsatz": "n.a.",
+    "match": 5,
+    "portal": "https://www.fev.com/jobs/",
+    "groesse": "mittel"
+  },
+  {
+    "name": "TÜV SÜD AG",
+    "branche": "Prüfdienstleistungen",
+    "land": "Deutschland",
+    "laender": [
+      "Deutschland"
+    ],
+    "ma": 26000,
+    "ma_label": "~26.000",
+    "umsatz": "~2,7 Mrd. €",
+    "match": 4,
+    "portal": "https://jobs.tuvsud.com/search?facetFilters=%7B%22cust_brand%22%3A%5B%22T%C3%9CV+S%C3%9CD%22%5D%2C%22jobLocationCountry%22%3A%5B%22Deutschland%22%5D%7D&locale=de_DE",
+    "groesse": "gross"
+  },
+  {
+    "name": "CATL Europe GmbH",
+    "branche": "Batterie / E-Mobility",
+    "land": "Deutschland",
+    "laender": [
+      "Deutschland"
+    ],
+    "ma": 1000,
+    "ma_label": "~1.000",
+    "umsatz": "Teil CATL global",
+    "match": 5,
+    "portal": "https://www.stepstone.de/jobs/catl/in-deutschland.html",
+    "groesse": "mittel"
+  }
+];
+const jobsData = [
+  {
+    "title": "Systemingenieur Entwicklung Analytik (m/w/d)",
+    "company": "Polytec GmbH",
+    "ort": "Waldbronn, Deutschland",
+    "land": "Deutschland",
+    "branche": "Messtechnik",
+    "remote": "Hybrid",
+    "sprache": "Deutsch / Englisch",
+    "veroeffentlicht": "aktuell",
+    "alter_tage": 0,
+    "match": 4,
+    "level": "Einsteiger",
+    "anforderungen": "Ingenieur- oder Naturwissenschaftsstudium; optische Systeme, Messdatenauswertung, Produktentwicklung, Prototypenbau und interdisziplinäre Zusammenarbeit; passt zu optischen Prüfständen, Raytracing und hands-on Entwicklung",
+    "link": "https://www.polytec.com/de/karriere/stellenangebote/systemingenieur-entwicklung-analytik",
+    "quelle": "Polytec Careers"
+  },
+  {
+    "title": "Provcellsingenjör / Test Bed Engineer",
+    "company": "AVL MTC Motortestcenter AB",
+    "ort": "Södertälje, Schweden",
+    "land": "Schweden",
+    "branche": "Automotive",
+    "remote": "Onsite",
+    "sprache": "Schwedisch / Englisch",
+    "veroeffentlicht": "vor 2 Tagen",
+    "alter_tage": 2,
+    "match": 5,
+    "level": "Junior (1–3 J.)",
+    "anforderungen": "Prüfstandsbetrieb, Kalibrierung, Messsysteme, Fehleranalyse, Dokumentation und kundennahes Arbeiten; starker Fit zu Testbench-, Validierungs- und Fahrzeugtechnikprofil",
+    "link": "https://jobs.avl.com/job/S%C3%B6dert%C3%A4lje-Provcellsingenj%C3%B6r-Test-Bed-Engineer/1376586733/",
+    "quelle": "AVL Careers"
+  },
+  {
+    "title": "Wissenschaftliche/r Mitarbeiter/in (w/m/d) Maschinenbau – Thermodynamik / Strömungsmechanik",
+    "company": "RWTH Aachen University",
+    "ort": "Aachen, Deutschland",
+    "land": "Deutschland",
+    "branche": "Forschung",
+    "remote": "Hybrid",
+    "sprache": "Deutsch",
+    "veroeffentlicht": "vor 17 Stunden",
+    "alter_tage": 0,
+    "match": 5,
+    "level": "Einsteiger",
+    "anforderungen": "M.Sc. Maschinenbau; Strömungsmechanik/Thermodynamik; Erfahrung in Simulation/Experiment",
+    "link": "https://www.xing.com/jobs/aachen-wis-sen-schaft-li-che-ar-ter-ma-schi-nen-bau-schwer-punk-ten-ther-mo-dy-mik-stroe-mungs-me-cha-nik-tme-156081337",
+    "quelle": "XING"
+  },
+  {
+    "title": "Wiss. Mitarbeiter*in (d/m/w) – Optische Strömungsdiagnostik",
+    "company": "RWTH Aachen University",
+    "ort": "Aachen, Deutschland",
+    "land": "Deutschland",
+    "branche": "Forschung",
+    "remote": "Hybrid",
+    "sprache": "Deutsch",
+    "veroeffentlicht": "vor 17 Stunden",
+    "alter_tage": 0,
+    "match": 5,
+    "level": "Einsteiger",
+    "anforderungen": "M.Sc. Maschinenbau/Physik; Strömungsdiagnostik; Experimentelle Methoden (passt zu Sebastians Forschungsthema Tropfenaufprall)",
+    "link": "https://www.xing.com/jobs/aachen-wis-sen-schaft-li-che-ar-ter-for-schung-ent-wick-lung-be-reich-op-ti-scher-stroe-mungs-dia-gno-tik-tme-156081363",
+    "quelle": "XING"
+  },
+  {
+    "title": "Ingenieur CFD-Simulation & numerische Optimierung",
+    "company": "SHENGU Europäisches Forschungszentrum GmbH",
+    "ort": "Aachen, Deutschland",
+    "land": "Deutschland",
+    "branche": "Forschung",
+    "remote": "Hybrid",
+    "sprache": "Englisch",
+    "veroeffentlicht": "vor 3 Tagen",
+    "alter_tage": 3,
+    "match": 4,
+    "level": "Junior (1–3 J.)",
+    "anforderungen": "Master Strömungsmechanik; 1–3 J. CFD-Erfahrung; STAR-CCM+; Python; Turbomaschinen v. Vorteil; Englisch",
+    "link": "https://www.stepstone.de/stellenangebote--Ingenieur-CFD-Simulation-numerische-Optimierung-Aachen-SHENGU-Europaeisches-Forschungszentrum-GmbH--14234649-inline.html",
+    "quelle": "StepStone"
+  },
+  {
+    "title": "Ingenieur Aerodynamik & Schaufelauslegung",
+    "company": "SHENGU Europäisches Forschungszentrum GmbH",
+    "ort": "Aachen, Deutschland",
+    "land": "Deutschland",
+    "branche": "Forschung",
+    "remote": "Hybrid",
+    "sprache": "Englisch",
+    "veroeffentlicht": "vor 3 Tagen",
+    "alter_tage": 3,
+    "match": 4,
+    "level": "Einsteiger",
+    "anforderungen": "Master Maschinenbau/Luft- und Raumfahrt; Aerodynamik; CFD; Turbomaschinen",
+    "link": "https://www.stepstone.de/stellenangebote--Ingenieur-Aerodynamik-Schaufelauslegung-Aachen-SHENGU-Europaeisches-Forschungszentrum-GmbH--14234650-inline.html",
+    "quelle": "StepStone"
+  },
+  {
+    "title": "CFD Simulation Engineer (m/w/d) – Aeroakustik & Turbomaschinen",
+    "company": "Wingfan Ltd. & Co. KG",
+    "ort": "Hamburg, Deutschland",
+    "land": "Deutschland",
+    "branche": "Industrie",
+    "remote": "Hybrid",
+    "sprache": "Deutsch",
+    "veroeffentlicht": "vor 2 Wochen",
+    "alter_tage": 14,
+    "match": 4,
+    "level": "Junior (1–3 J.)",
+    "anforderungen": "Master Maschinenbau/Strömungsmechanik; STAR-CCM+; CFD-Aeroakustik; FSI; Deutsch C1",
+    "link": "https://www.stepstone.de/stellenangebote--CFD-Simulation-Engineer-m-w-d-Aeroakustik-Turbomaschinen-Hamburg-Wingfan-Ltd-Co-KG--14183956-inline.html",
+    "quelle": "StepStone"
+  },
+  {
+    "title": "Aerodynamic Design & Analysis Engineer (m/w/d) – Airbus",
+    "company": "HESYS TechnicalSystems / Airbus",
+    "ort": "Manching, Deutschland",
+    "land": "Deutschland",
+    "branche": "Luft- & Raumfahrt",
+    "remote": "Onsite",
+    "sprache": "Englisch",
+    "veroeffentlicht": "aktuell",
+    "alter_tage": 5,
+    "match": 4,
+    "level": "Junior (1–3 J.)",
+    "anforderungen": "Master Maschinenbau/Luft- und Raumfahrt; Aerodynamik-Analyse; Arbeitnehmerueberlassung bzw. Engineering-Dienstleister im Airbus-Umfeld; fachlich passend, aber nicht als direkte Airbus-Bewerbung behandeln",
+    "link": "https://hesys-engineering.de/jobs/",
+    "quelle": "HESYS Careers"
+  },
+  {
+    "title": "CFD Software Engineer",
+    "company": "Siemens AG",
+    "ort": "Hamburg, Deutschland",
+    "land": "Deutschland",
+    "branche": "Industrie",
+    "remote": "Hybrid",
+    "sprache": "Englisch",
+    "veroeffentlicht": "aktuell",
+    "alter_tage": 7,
+    "match": 4,
+    "level": "Junior (1–3 J.)",
+    "anforderungen": "M.Sc. Maschinenbau/Computational Mechanics; CFD-Softwareentwicklung; C++; Python",
+    "link": "https://de.indeed.com/viewjob?jk=2bc6064a39cc06e2",
+    "quelle": "Indeed"
+  },
+  {
+    "title": "Propulsion Design Engineer (m/f/d)",
+    "company": "Isar Aerospace SE",
+    "ort": "München, Deutschland",
+    "land": "Deutschland",
+    "branche": "Luft- & Raumfahrt",
+    "remote": "Hybrid",
+    "sprache": "Englisch",
+    "veroeffentlicht": "aktuell",
+    "alter_tage": 6,
+    "match": 4,
+    "level": "Einsteiger",
+    "anforderungen": "M.Sc. Maschinenbau/Luft- und Raumfahrt; Fluid Dynamics; Combustion; Triebwerke; Englisch fließend",
+    "link": "https://job-boards.greenhouse.io/isaraerospace",
+    "quelle": "Isar Aerospace Careers"
+  },
+  {
+    "title": "Berechnungsingenieur – Strömungsmechanik (m/w/d)",
+    "company": "Rheinmetall AG",
+    "ort": "Unterlüß bei Celle, Deutschland",
+    "land": "Deutschland",
+    "branche": "Verteidigung",
+    "remote": "Onsite",
+    "sprache": "Deutsch",
+    "veroeffentlicht": "vor 1 Woche",
+    "alter_tage": 7,
+    "match": 3,
+    "level": "Junior (1–3 J.)",
+    "anforderungen": "Maschinenbaustudium Schwerpunkt Strömungsmechanik; CFD (TAU); Python, C/C++; Außenballistik; Linux",
+    "link": "https://www.stepstone.de/stellenangebote--Berechnungsingenieur-Stroemungsmechanik-m-w-d-Unterluess-bei-Celle-Rheinmetall-Waffe-Munition-GmbH--13764707-inline.html",
+    "quelle": "StepStone"
+  },
+  {
+    "title": "Entwicklungsingenieur (m/w/d) – Flugkörperkonzeption, Aerodynamik",
+    "company": "Diehl Defence GmbH & Co. KG",
+    "ort": "Überlingen am Bodensee, Deutschland",
+    "land": "Deutschland",
+    "branche": "Verteidigung",
+    "remote": "Onsite",
+    "sprache": "Deutsch",
+    "veroeffentlicht": "vor 4 Tagen",
+    "alter_tage": 4,
+    "match": 3,
+    "level": "Junior (1–3 J.)",
+    "anforderungen": "Master Maschinenbau/Luft- und Raumfahrt; Aerodynamik; Flugmechanik; Konzeptionierung Lenkflugkörper",
+    "link": "https://www.stepstone.de/stellenangebote--Entwicklungsingenieur-m-w-d-fuer-Flugkoerperkonzeption-Aerodynamik-und-Flugmechanik-Ueberlingen-am-Bodensee-Diehl-Defence-GmbH-Co-KG--14227457-inline.html",
+    "quelle": "StepStone"
+  },
+  {
+    "title": "Simulationsingenieur CFD / Thermofluiddynamik (all gender)",
+    "company": "ALTEN Consulting Services GmbH",
+    "ort": "Kaufering, Deutschland",
+    "land": "Deutschland",
+    "branche": "Industrie",
+    "remote": "Hybrid",
+    "sprache": "Deutsch",
+    "veroeffentlicht": "vor 1 Woche",
+    "alter_tage": 7,
+    "match": 4,
+    "level": "Einsteiger",
+    "anforderungen": "Master Maschinenbau/Thermodynamik; CFD; Automotive-Erfahrung von Vorteil",
+    "link": "https://www.stepstone.de/stellenangebote--Simulationsingenieur-CFD-Thermofluiddynamik-all-gender-Kaufering-ALTEN-Consulting-Services-GmbH--14147327-inline.html",
+    "quelle": "StepStone"
+  },
+  {
+    "title": "CFD / Thermohydraulik Ingenieur (m/w/d) – Reaktorsysteme",
+    "company": "Framatome SAS",
+    "ort": "Erlangen, Deutschland",
+    "land": "Deutschland",
+    "branche": "Energie",
+    "remote": "Hybrid",
+    "sprache": "Deutsch",
+    "veroeffentlicht": "aktuell",
+    "alter_tage": 5,
+    "match": 5,
+    "level": "Einsteiger",
+    "anforderungen": "Master Maschinenbau/Energietechnik; CFD (ANSYS Fluent/CFX); Thermohydraulik Reaktoranlagen; Deutsch + Englisch fließend",
+    "link": "https://www.framatome.com/en/jobseekers/job-offers/",
+    "quelle": "Framatome Careers"
+  },
+  {
+    "title": "Thermal-Hydraulic Analysis Engineer (m/f/d)",
+    "company": "Westinghouse Electric Company",
+    "ort": "Västerås, Schweden",
+    "land": "Schweden",
+    "branche": "Energie",
+    "remote": "Hybrid",
+    "sprache": "Englisch",
+    "veroeffentlicht": "aktuell",
+    "alter_tage": 7,
+    "match": 4,
+    "level": "Junior (1–3 J.)",
+    "anforderungen": "M.Sc. Nuclear/Mechanical Engineering; Thermohydraulik; RELAP5, TRACE oder CFD; Englisch fließend",
+    "link": "https://careers.westinghousenuclear.com/",
+    "quelle": "Westinghouse Careers"
+  },
+  {
+    "title": "Simulation Engineer – Turbines & Power Generation (m/f/d)",
+    "company": "GE Vernova",
+    "ort": "Mannheim, Deutschland",
+    "land": "Deutschland",
+    "branche": "Energie",
+    "remote": "Hybrid",
+    "sprache": "Englisch",
+    "veroeffentlicht": "aktuell",
+    "alter_tage": 6,
+    "match": 4,
+    "level": "Junior (1–3 J.)",
+    "anforderungen": "M.Sc. Maschinenbau/Energietechnik; CFD Turbinen-/Strömungssimulation; ANSYS Fluent; Englisch fließend",
+    "link": "https://jobs.gecareers.com/vernova/global/en/search.html?keywords=CFD+simulation+engineer&location=Germany",
+    "quelle": "GE Vernova Careers"
+  },
+  {
+    "title": "NVH Engineer (f/m/d)",
+    "company": "MAN Truck & Bus Group",
+    "ort": "München, Deutschland",
+    "land": "Deutschland",
+    "branche": "NVH / Akustik",
+    "remote": "Hybrid",
+    "sprache": "Deutsch / Englisch",
+    "veroeffentlicht": "vor 6 Tagen",
+    "alter_tage": 6,
+    "match": 5,
+    "level": "Junior (1–3 J.)",
+    "anforderungen": "NVH-Entwicklung im Nutzfahrzeugumfeld; Schwingung/Akustik; Versuchs- und Simulationsnaehe; sehr guter Fit zu Fahrzeugdynamik- und NVH-Schwerpunkt",
+    "link": "https://www.stepstone.de/stellenangebote--NVH-Engineer-f-m-d-Muenchen-MAN-Truck-Bus-Group--14190061-inline.html",
+    "quelle": "StepStone"
+  },
+  {
+    "title": "NVH-Ingenieur / Akustik-Entwickler (m/w/d)",
+    "company": "AUDI AG",
+    "ort": "Ingolstadt, Deutschland",
+    "land": "Deutschland",
+    "branche": "NVH / Akustik",
+    "remote": "Hybrid",
+    "sprache": "Deutsch",
+    "veroeffentlicht": "aktuell",
+    "alter_tage": 4,
+    "match": 5,
+    "level": "Einsteiger",
+    "anforderungen": "M.Sc. Maschinenbau; Fahrzeugdynamik/NVH/Akustik; Simulationskenntnisse; Direkteinstieg nach Studienabschluss willkommen",
+    "link": "https://www.audi-jobs.com/de/home",
+    "quelle": "Audi Careers"
+  },
+  {
+    "title": "Akustik- und Schwingungsingenieur (m/w/d)",
+    "company": "Müller-BBM GmbH",
+    "ort": "Planegg, Deutschland",
+    "land": "Deutschland",
+    "branche": "NVH / Akustik",
+    "remote": "Hybrid",
+    "sprache": "Deutsch",
+    "veroeffentlicht": "aktuell",
+    "alter_tage": 5,
+    "match": 5,
+    "level": "Einsteiger",
+    "anforderungen": "M.Sc. Maschinenbau/Physik; Akustik, Schwingungsanalyse, NVH; experimentelle Messtechnik; sehr gutes Deutsch",
+    "link": "https://www.mbbm-ind.com/de/karriere/stellenangebote",
+    "quelle": "Müller-BBM Careers"
+  },
+  {
+    "title": "Entwicklungsingenieur NVH-Simulation (m/w/d)",
+    "company": "AVL List GmbH",
+    "ort": "Graz, Österreich",
+    "land": "Österreich",
+    "branche": "NVH / Akustik",
+    "remote": "Hybrid",
+    "sprache": "Deutsch",
+    "veroeffentlicht": "aktuell",
+    "alter_tage": 3,
+    "match": 5,
+    "level": "Einsteiger",
+    "anforderungen": "M.Sc. Maschinenbau; Fahrzeugdynamik/NVH-Simulation; FEM/MBS; Direkteinstieg; Englisch willkommen",
+    "link": "https://www.avl.com/en/career",
+    "quelle": "AVL Careers"
+  },
+  {
+    "title": "Versuchsingenieur Optische Messtechnik (m/w/d)",
+    "company": "Polytec GmbH",
+    "ort": "Waldbronn, Deutschland",
+    "land": "Deutschland",
+    "branche": "Messtechnik",
+    "remote": "Hybrid",
+    "sprache": "Deutsch",
+    "veroeffentlicht": "aktuell",
+    "alter_tage": 6,
+    "match": 5,
+    "level": "Einsteiger",
+    "anforderungen": "M.Sc. Maschinenbau/Physik; optische Messtechnik (Laser, Vibrometrie, Schlieren); Bildverarbeitung (passt zu Schlieren-Thesis + ISTM-Forschung)",
+    "link": "https://www.polytec.com/de/karriere/stellenangebote",
+    "quelle": "Polytec Careers"
+  },
+  {
+    "title": "Measurement & Test Engineer (m/f/d) – Fluid & Thermal",
+    "company": "Hottinger Brüel & Kjær (HBK)",
+    "ort": "Darmstadt, Deutschland",
+    "land": "Deutschland",
+    "branche": "Messtechnik",
+    "remote": "Hybrid",
+    "sprache": "Englisch",
+    "veroeffentlicht": "aktuell",
+    "alter_tage": 7,
+    "match": 4,
+    "level": "Einsteiger",
+    "anforderungen": "M.Sc. Maschinenbau/Physik; Messtechnik; Signalverarbeitung; experimentelle Methodik; Englisch fließend",
+    "link": "https://www.hbkworld.com/en/careers",
+    "quelle": "HBK Careers"
+  },
+  {
+    "title": "Ingenieur Konstruktion & Aerodynamik Segelflugzeug (m/w/d)",
+    "company": "Schempp-Hirth Flugzeugbau GmbH",
+    "ort": "Kirchheim unter Teck, Deutschland",
+    "land": "Deutschland",
+    "branche": "Luft- & Raumfahrt",
+    "remote": "Onsite",
+    "sprache": "Deutsch",
+    "veroeffentlicht": "aktuell",
+    "alter_tage": 8,
+    "match": 5,
+    "level": "Einsteiger",
+    "anforderungen": "M.Sc. Maschinenbau/Luft- und Raumfahrt; Aerodynamik; Konstruktion CATIA/Creo; Segelflugzeugbau oder Pilotenerfahrung sehr willkommen (Akaflieg-Profil passt ideal)",
+    "link": "https://www.schempp-hirth.com/unternehmen/ausbildungsplaetze-und-offene-stellen",
+    "quelle": "Schempp-Hirth Careers"
+  },
+  {
+    "title": "Versuchsingenieur (m/w/d) Applikation Sportwagen",
+    "company": "FERCHAU GmbH",
+    "ort": "Stuttgart, Deutschland",
+    "land": "Deutschland",
+    "branche": "Automotive",
+    "remote": "Hybrid",
+    "sprache": "Deutsch",
+    "veroeffentlicht": "vor 4 Tagen",
+    "alter_tage": 4,
+    "match": 5,
+    "level": "Einsteiger",
+    "anforderungen": "M.Sc. Maschinenbau/Fahrzeugtechnik; Fahrzeugversuch; Applikation Sportwagen; Messtechnik; Direkteinstieg",
+    "link": "https://www.stepstone.de/stellenangebote--Versuchsingenieur-m-w-d-Applikation-Sportwagen-Stuttgart-FERCHAU-Connecting-People-and-Technologies--10478768-inline.html",
+    "quelle": "StepStone"
+  },
+  {
+    "title": "Versuchsingenieur Messtechnik (m/w/d)",
+    "company": "FERCHAU GmbH",
+    "ort": "Reutlingen, Deutschland",
+    "land": "Deutschland",
+    "branche": "Messtechnik",
+    "remote": "Hybrid",
+    "sprache": "Deutsch",
+    "veroeffentlicht": "vor 4 Tagen",
+    "alter_tage": 4,
+    "match": 4,
+    "level": "Einsteiger",
+    "anforderungen": "M.Sc. Maschinenbau; Messtechnik; Prüfstandsarbeit; Signalverarbeitung; passt zu ISTM-Versuchserfahrung und Schlieren-Thesis",
+    "link": "https://www.stepstone.de/stellenangebote--Versuchsingenieur-Messtechnik-m-w-d-Reutlingen-FERCHAU-Connecting-People-and-Technologies--7837560-inline.html",
+    "quelle": "StepStone"
+  },
+  {
+    "title": "Versuchsingenieur (w/m/d) Gesamtfahrzeugerprobung",
+    "company": "Daimler Buses GmbH",
+    "ort": "Neu-Ulm / Mannheim, Deutschland",
+    "land": "Deutschland",
+    "branche": "Automotive",
+    "remote": "Hybrid",
+    "sprache": "Deutsch",
+    "veroeffentlicht": "vor 1 Woche",
+    "alter_tage": 7,
+    "match": 4,
+    "level": "Einsteiger",
+    "anforderungen": "M.Sc. Maschinenbau/Fahrzeugtechnik; Gesamtfahrzeugerprobung; Messtechnik; Daimler Buses (eCitaro, Setra)",
+    "link": "https://www.stepstone.de/stellenangebote--Versuchsingenieur-w-m-d-Kundenfahrerprobung-und-Gesamtfahrzeugerprobung-am-Standort-Neu-Ulm-oder-Mannheim-Neu-Ulm-Mannheim-Daimler-Buses-GmbH--14200871-inline.html",
+    "quelle": "StepStone"
+  },
+  {
+    "title": "Battery Safety Engineer (m/f/d)",
+    "company": "CATL Europe GmbH",
+    "ort": "München, Deutschland",
+    "land": "Deutschland",
+    "branche": "Batterie / E-Mobility",
+    "remote": "Hybrid",
+    "sprache": "Englisch",
+    "veroeffentlicht": "aktuell",
+    "alter_tage": 3,
+    "match": 5,
+    "level": "Einsteiger",
+    "anforderungen": "M.Sc. Maschinenbau/Elektrotechnik; Li-Ion Batteriesicherheit; Thermal Runaway Testing; Prüfstandserfahrung; Englisch fließend – direkter Fit zur Masterarbeit und Werkstudium bei Porsche Battery Safety",
+    "link": "https://www.stepstone.de/jobs/catl/in-deutschland.html",
+    "quelle": "StepStone"
+  },
+  {
+    "title": "Prüfingenieur Batteriesicherheit / Cell Testing (m/w/d)",
+    "company": "TÜV SÜD AG",
+    "ort": "München / Garching, Deutschland",
+    "land": "Deutschland",
+    "branche": "Prüfdienstleistungen",
+    "remote": "Hybrid",
+    "sprache": "Deutsch",
+    "veroeffentlicht": "aktuell",
+    "alter_tage": 5,
+    "match": 4,
+    "level": "Einsteiger",
+    "anforderungen": "M.Sc. Maschinenbau/Elektrotechnik; Li-Ion Zelltests, UN38.3, IEC 62133; Prüfstand; Direkteinstieg – Masterarbeit (Thermal Runaway Prüfstand) und Porsche-Erfahrung sind hervorragende Voraussetzungen",
+    "link": "https://jobs.tuvsud.com/search?facetFilters=%7B%22cust_brand%22%3A%5B%22T%C3%9CV+S%C3%9CD%22%5D%2C%22jobLocationCountry%22%3A%5B%22Deutschland%22%5D%7D&locale=de_DE",
+    "quelle": "TÜV SÜD Careers"
+  },
+  {
+    "title": "Test & Validation Engineer – Powertrain / Battery (m/w/d)",
+    "company": "FEV Group GmbH",
+    "ort": "Aachen / Stuttgart, Deutschland",
+    "land": "Deutschland",
+    "branche": "Automotive Engineering Services",
+    "remote": "Hybrid",
+    "sprache": "Deutsch / Englisch",
+    "veroeffentlicht": "aktuell",
+    "alter_tage": 4,
+    "match": 5,
+    "level": "Einsteiger",
+    "anforderungen": "M.Sc. Maschinenbau; Prüfstand, Validierung, Messtechnik; E-Antrieb / Batterie von Vorteil; Porsche-Erfahrung willkommen; Direkteinstieg",
+    "link": "https://www.fev.com/jobs/",
+    "quelle": "FEV Careers"
+  }
+];
 const linkedinQueries = [
   {
     "title": "🔋 Battery Safety / Test Bench – DE",
@@ -523,9 +1581,9 @@ const linkedinQueries = [
     "description": "NVH Engineer, Vehicle Comfort, Acoustics, Measurement Engineer – Deutschland und Österreich",
     "url": "https://www.linkedin.com/jobs/search/?keywords=NVH%20Engineer%20Vehicle%20Comfort%20Acoustics%20Measurement%20Engineer&location=Deutschland&f_WT=1%2C2%2C3&f_E=2%2C3"
   }
-]
-;
+];
 // ===== END DATA SECTION =====
+
 
 // ===== BRANCHE FARB-PALETTE (automatisch, hash-basiert) =====
 const BRANCHE_PALETTE = [
@@ -587,6 +1645,33 @@ function loadTrackerState() {
 }
 function saveTrackerState() {
   try { localStorage.setItem(getTrackerKey(), JSON.stringify(trackerState)); } catch(e) {}
+}
+
+// ===== TRACKER BOOTSTRAP AUS VERÖFFENTLICHTER JSON-DATEI =====
+// Beim allerersten Aufruf in einem Browser (noch kein localStorage-Stand) wird
+// der zuletzt veröffentlichte Tracker-Stand aus data/tracker_<slug>.json geladen,
+// damit alle veröffentlichten Dashboards vom selben aktuellen Stand ausgehen.
+function bootstrapTrackerFromRepo() {
+  if (Object.keys(trackerState).length > 0) return;
+  const url = 'data/tracker_' + (PROFILE.slug || 'default') + '.json';
+  fetch(url, { cache: 'no-store' })
+    .then(r => r.ok ? r.json() : null)
+    .then(data => {
+      if (!data) return;
+      const imported = data.tracker || data;
+      if (!imported || typeof imported !== 'object') return;
+      const next = {};
+      Object.keys(imported).forEach(k => {
+        const idx = parseInt(k, 10);
+        if (!Number.isNaN(idx) && imported[k] && typeof imported[k] === 'object') next[idx] = imported[k];
+      });
+      if (Object.keys(next).length === 0) return;
+      trackerState = next;
+      saveTrackerState();
+      renderTracker();
+      updateTrackerStats();
+    })
+    .catch(() => {});
 }
 
 // ===== RENDER-HELFER =====
@@ -923,6 +2008,7 @@ function sortTable(tableId, col) {
 
 // ===== CSV IMPORT =====
 function importTrackerCSV() { document.getElementById('tracker-import-input').click(); }
+function importTrackerJSONFile() { document.getElementById('tracker-import-json-input').click(); }
 
 function handleTrackerImport(file) {
   if (!file) return;
@@ -969,6 +2055,48 @@ function parseCSVLine(line) {
   return result;
 }
 
+function exportTrackerJSON() {
+  loadTrackerState();
+  const payload = {
+    slug: PROFILE.slug || 'export',
+    updatedAt: new Date().toISOString(),
+    tracker: trackerState
+  };
+  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = (PROFILE.slug || 'export') + '_tracker_' + new Date().toISOString().slice(0, 10) + '.json';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function handleTrackerImportJSON(file) {
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const data = JSON.parse(e.target.result);
+      const imported = data.tracker || data;
+      if (!imported || typeof imported !== 'object') throw new Error('Ungültiges Format');
+      trackerState = {};
+      Object.keys(imported).forEach(k => {
+        const idx = parseInt(k, 10);
+        if (!Number.isNaN(idx) && imported[k] && typeof imported[k] === 'object') {
+          trackerState[idx] = imported[k];
+        }
+      });
+      saveTrackerState();
+      renderTracker();
+      document.getElementById('tracker-import-json-input').value = '';
+      alert('JSON-Import abgeschlossen.');
+    } catch (err) {
+      alert('Die JSON-Datei konnte nicht gelesen werden.');
+    }
+  };
+  reader.readAsText(file, 'UTF-8');
+}
+
 // ===== CSV EXPORT =====
 function exportCSV(type) {
   const slug = PROFILE.slug || 'export';
@@ -1008,6 +2136,7 @@ document.addEventListener('DOMContentLoaded', () => {
   renderLinkedIn();
   loadTrackerState();
   updateTrackerStats();
+  bootstrapTrackerFromRepo();
 });
 </script>
 <!-- PWA Service Worker -->

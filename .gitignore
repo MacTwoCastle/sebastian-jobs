@@ -8,3 +8,5 @@
 !manifest.json
 !sw.js
 !icon.svg
+!data/
+!data/tracker_sebastian.json
