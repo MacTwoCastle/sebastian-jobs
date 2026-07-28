@@ -124,6 +124,10 @@
   .company-logo { width: 28px; height: 28px; border-radius: 5px; background: var(--primary); color: #fff; display: inline-flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.65rem; margin-right: 7px; flex-shrink: 0; }
   .cell-company { display: flex; align-items: center; }
 
+  /* VERMITTLER / HEADHUNTER BADGE */
+  .vermittler-badge { display: inline-flex; align-items: center; justify-content: center; margin-left: 6px; font-size: 0.7rem; cursor: help; border-bottom: 1px dashed var(--muted); flex-shrink: 0; }
+  .vermittler-badge:hover { opacity: 0.75; }
+
   .tag { display: inline-block; padding: 2px 7px; border-radius: 4px; font-size: 0.68rem; font-weight: 600; background: #eee; color: #555; margin: 1px; }
   .tag-remote { background: #e8f5e9; color: #2e7d32; }
   .tag-hybrid { background: #fff8e1; color: #f57f17; }
@@ -1733,10 +1737,11 @@ function renderJobs(data) {
     const ms = getJobMatch(j);
     const isNew = j.alter_tage <= 3;
     const neu = isNew ? ' <span style="background:#e8f5e9;color:#2e7d32;font-size:0.68rem;font-weight:700;padding:1px 6px;border-radius:10px;">NEU</span>' : '';
+    const vermittlerBadge = j.vermittler ? ' <span class="vermittler-badge" title="Vermittelt durch Personalberatung/Headhunter – der tatsächliche Arbeitgeber wird in dieser Anzeige nicht genannt">🕵️ Vermittlung</span>' : '';
     const tr = document.createElement('tr');
     tr.innerHTML =
       '<td><strong>' + escapeHtml(j.title) + '</strong>' + neu + '</td>' +
-      '<td><div class="cell-company"><div class="company-logo">' + logoInitials(j.company) + '</div>' + escapeHtml(j.company) + '</div></td>' +
+      '<td><div class="cell-company"><div class="company-logo">' + logoInitials(j.company) + '</div>' + escapeHtml(j.company) + vermittlerBadge + '</div></td>' +
       '<td>' + escapeHtml(j.ort) + '</td>' +
       '<td>' + brancheBadge(j.branche) + '</td>' +
       '<td>' + remoteTag(j.remote) + '</td>' +
@@ -1765,10 +1770,11 @@ function renderTracker() {
     const state = trackerState[idx] || { status: 'offen', datum: '', notiz: '' };
     if (activeTrackerFilter && state.status !== activeTrackerFilter) return;
     shown++;
+    const trackerVermittlerBadge = j.vermittler ? ' <span class="vermittler-badge" title="Vermittelt durch Personalberatung/Headhunter – der tatsächliche Arbeitgeber wird in dieser Anzeige nicht genannt">🕵️</span>' : '';
     const tr = document.createElement('tr');
     tr.innerHTML =
       '<td><strong>' + escapeHtml(j.title) + '</strong></td>' +
-      '<td>' + escapeHtml(j.company) + '</td>' +
+      '<td>' + escapeHtml(j.company) + trackerVermittlerBadge + '</td>' +
       '<td>' + escapeHtml(j.ort) + '</td>' +
       '<td>' + starsHTML(getJobMatch(j)) + '</td>' +
       '<td><select onchange="updateTracker(' + idx + ',\'status\',this.value)" style="padding:4px 8px;border-radius:5px;border:1px solid #ccc;font-size:0.8rem;">' +
