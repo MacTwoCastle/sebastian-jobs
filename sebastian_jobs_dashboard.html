@@ -128,6 +128,15 @@
   .vermittler-badge { display: inline-flex; align-items: center; justify-content: center; margin-left: 6px; font-size: 0.7rem; cursor: help; border-bottom: 1px dashed var(--muted); flex-shrink: 0; }
   .vermittler-badge:hover { opacity: 0.75; }
 
+  /* LINK-OFFLINE WARNUNG */
+  .link-warning-badge { display: inline-flex; align-items: center; justify-content: center; margin-left: 6px; font-size: 0.7rem; cursor: help; border-bottom: 1px dashed var(--red); color: var(--red); flex-shrink: 0; }
+  .link-warning-badge:hover { opacity: 0.75; }
+  .herkunft-badge { display: inline-flex; align-items: center; justify-content: center; margin-left: 6px; font-size: 0.7rem; cursor: help; border-bottom: 1px dashed #1565c0; color: #1565c0; flex-shrink: 0; }
+  .herkunft-badge:hover { opacity: 0.75; }
+  .apply-btn-group { display: flex; flex-direction: column; gap: 4px; align-items: flex-start; }
+  .apply-btn-fallback { font-size: 0.7rem; color: var(--muted); text-decoration: none; border-bottom: 1px dashed var(--muted); }
+  .apply-btn-fallback:hover { color: var(--primary); }
+
   .tag { display: inline-block; padding: 2px 7px; border-radius: 4px; font-size: 0.68rem; font-weight: 600; background: #eee; color: #555; margin: 1px; }
   .tag-remote { background: #e8f5e9; color: #2e7d32; }
   .tag-hybrid { background: #fff8e1; color: #f57f17; }
@@ -140,6 +149,20 @@
   .tooltip { position: relative; cursor: help; }
   .tooltip::after { content: attr(data-tip); position: absolute; bottom: 120%; left: 50%; transform: translateX(-50%); background: #333; color: #fff; padding: 5px 9px; border-radius: 5px; font-size: 0.72rem; white-space: nowrap; pointer-events: none; opacity: 0; transition: opacity .2s; z-index: 10; }
   .tooltip:hover::after { opacity: 1; }
+
+  /* HERLEITUNG (CV -> Suchprofil -> Recherche) */
+  .herleitung-stage-title { font-size: 1rem; font-weight: 800; color: var(--primary); display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+  .herleitung-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 14px; }
+  .herleitung-card { background: #fff; border: 1px solid var(--border); border-radius: 10px; padding: 16px; }
+  .herleitung-card h4 { font-size: 0.88rem; font-weight: 700; color: var(--primary); margin-bottom: 8px; }
+  .herleitung-card ul { padding-left: 18px; font-size: 0.82rem; color: var(--text); line-height: 1.7; }
+  .herleitung-arrow { text-align: center; font-size: 1.6rem; color: var(--accent2); margin: 4px 0 18px; }
+  .herleitung-chip { display: inline-flex; align-items: center; gap: 4px; background: #eef3f9; color: var(--primary); border: 1px solid var(--border); padding: 4px 10px; border-radius: 20px; font-size: 0.78rem; margin: 3px 4px 3px 0; cursor: pointer; transition: all .15s; }
+  .herleitung-chip:hover { background: var(--primary); color: #fff; }
+  .herleitung-chip-static { cursor: default; }
+  .herleitung-chip-static:hover { background: #eef3f9; color: var(--primary); }
+  .herleitung-begruendung { font-size: 0.78rem; color: var(--muted); margin-top: 10px; font-style: italic; }
+  .herleitung-steps { background: #fff; border: 1px solid var(--border); border-radius: 10px; padding: 18px 18px 18px 34px; font-size: 0.84rem; line-height: 1.9; }
 </style>
 </head>
 <body>
@@ -160,6 +183,7 @@
   <div class="tab" onclick="switchTab('jobs')">📋 Stellenanzeigen</div>
   <div class="tab" onclick="switchTab('tracker')">🗂 Bewerbungs-Tracker</div>
   <div class="tab" onclick="switchTab('linkedin')">🔗 LinkedIn-Suche</div>
+  <div class="tab" onclick="switchTab('herleitung')">🧭 Herleitung</div>
 </div>
 
 <div class="container">
@@ -299,6 +323,14 @@
         <option value="Executive">🟣 Executive</option>
       </select>
     </div>
+    <div class="filter-group">
+      <label>Herkunft</label>
+      <select id="f-job-herkunft" onchange="filterJobs()">
+        <option value="">Alle</option>
+        <option value="rollenspezifisch">🎯 Zielrolle</option>
+        <option value="abschlussbasiert">🎓 Abschlussbasiert</option>
+      </select>
+    </div>
     <button class="btn btn-outline" onclick="resetJobFilter()">↺ Zurücksetzen</button>
     <button class="btn btn-green" onclick="exportCSV('jobs')">⬇ CSV Export</button>
   </div>
@@ -384,6 +416,37 @@
   </div>
 </div>
 
+<!-- ===== TAB: HERLEITUNG ===== -->
+<div id="tab-herleitung" class="tab-content">
+  <div class="info-box">
+    <strong>Wie wurde recherchiert?</strong> Diese Seite zeigt transparent, wie aus dem Lebenslauf (und weiteren Unterlagen) ein individuelles Suchprofil abgeleitet wurde – und wie dieses Suchprofil die Internet-Recherche zu Branchen, Firmen und Stellenanzeigen gesteuert hat.
+  </div>
+
+  <div class="herleitung-stage">
+    <div class="herleitung-stage-title">1️⃣ CV-Kernfakten</div>
+    <div class="herleitung-cards" id="herleitung-cv-cards"></div>
+  </div>
+  <div class="herleitung-arrow">⬇️</div>
+
+  <div class="herleitung-stage">
+    <div class="herleitung-stage-title">2️⃣ Abgeleitetes Suchprofil</div>
+    <div class="herleitung-cards" id="herleitung-suchprofil-cards"></div>
+  </div>
+  <div class="herleitung-arrow">⬇️</div>
+
+  <div class="herleitung-stage">
+    <div class="herleitung-stage-title">3️⃣ Rechercheergebnisse</div>
+    <div class="stats-row" id="herleitung-result-stats"></div>
+    <div class="herleitung-cards" id="herleitung-branchen-cards" style="margin-top:14px;"></div>
+  </div>
+
+  <div style="margin-top:26px;">
+    <h3 style="font-size:0.95rem;font-weight:700;margin-bottom:10px;color:var(--primary);">🔎 Rechercheschritte im Überblick</h3>
+    <ol class="herleitung-steps" id="herleitung-steps-list"></ol>
+  </div>
+  <div id="herleitung-empty" class="no-results" style="display:none;">Für dieses Profil liegt noch keine Herleitung vor.</div>
+</div>
+
 </div><!-- /container -->
 
 <script>
@@ -393,7 +456,7 @@ const PROFILE = {
   "slug": "sebastian",
   "subtitle": "M.Sc. Maschinenbau (1,6) · Prüfstandsentwicklung · Battery Safety & Validierung · Experimentelle Strömungsmechanik · Fahrzeugkomfort / NVH · Aerodynamik",
   "searchStatus": "Aktiv suchend – M.Sc. 1,6 abgeschlossen 05/2026 · Werkstudent Porsche AG Battery Safety (ab 04/2026)",
-  "standDatum": "21.07.2026",
+  "standDatum": "31.07.2026",
   "skills": [
     "Prüfstandsentwicklung",
     "Batteriesicherheit",
@@ -446,7 +509,7 @@ const PROFILE = {
     "Dänemark"
   ],
   "firmenInfobox": "<strong>Profil-Matching:</strong> Im Fokus stehen Unternehmen, bei denen Sebastians Profil aus <strong>Prüfstandsentwicklung, Battery Safety (Li-Ion / Thermal Runaway), experimenteller Strömungsmechanik, NVH/Fahrzeugkomfort, Fahrzeugversuch, optischer Messtechnik und hands-on Fertigung</strong> direkt anschlussfähig ist. Priorisiert werden Automotive-Entwicklung, Validierung, Battery/E-Mobility, Messtechnik, Prüfdienstleistungen und ausgewählte Luft- &amp; Raumfahrt-Rollen.",
-  "jobsInfobox": "<strong>Quellen:</strong> LinkedIn, StepStone, Indeed, XING und Karriereseiten – selektiv aktualisiert am 21.07.2026. Priorisiert sind Einstiegs- und Juniorrollen mit klarem Bezug zu Prüfstand, Validierung, Battery Safety, Versuch, Fahrzeugentwicklung, NVH/Fahrzeugkomfort, Aerodynamik und optischer Messtechnik. Klicke auf <em>Jetzt bewerben</em> für den direkten Link zur Stellenanzeige.",
+  "jobsInfobox": "<strong>Quellen:</strong> LinkedIn, StepStone, Indeed, XING und Karriereseiten – selektiv aktualisiert am 31.07.2026. Priorisiert sind Einstiegs- und Juniorrollen mit klarem Bezug zu Prüfstand, Validierung, Battery Safety, Versuch, Fahrzeugentwicklung, NVH/Fahrzeugkomfort, Aerodynamik und optischer Messtechnik. Klicke auf <em>Jetzt bewerben</em> für den direkten Link zur Stellenanzeige.",
   "linkedinKeywordsTipp": "Empfohlene Keywords: <em>Test Bench Engineer, Battery Safety Engineer, Prüfstandsingenieur, Validation Engineer, Versuchsingenieur, NVH Engineer, Vehicle Testing, Optische Messtechnik, Aerodynamics Engineer, Lightweight Engineer</em>",
   "linkedinCompaniesTipp": "Profile von Firmen wie <strong>Porsche, Porsche Engineering, IAV, ATESTEO, FEV Group, Polytec, Kistler, AVL, TÜV SÜD, Audi, MAN Truck & Bus, CATL und Schempp-Hirth</strong> direkt folgen"
 };
@@ -1084,8 +1147,50 @@ const firmenData = [
     "ma_label": "~1.000",
     "umsatz": "Teil CATL global",
     "match": 5,
-    "portal": "https://www.stepstone.de/jobs/catl/in-deutschland.html",
+    "portal": "https://de.indeed.com/jobs?q=CATL+Battery&l=Deutschland",
     "groesse": "mittel"
+  },
+  {
+    "name": "KOSTAL Automobil Elektrik GmbH & Co. KG",
+    "branche": "NVH / Akustik",
+    "land": "Deutschland",
+    "laender": [
+      "Deutschland"
+    ],
+    "ma": 20000,
+    "ma_label": "~20.000",
+    "umsatz": "n.a.",
+    "match": 4,
+    "portal": "https://www.kostal.com/de/karriere",
+    "groesse": "gross"
+  },
+  {
+    "name": "GSI Helmholtzzentrum für Schwerionenforschung GmbH",
+    "branche": "Forschung",
+    "land": "Deutschland",
+    "laender": [
+      "Deutschland"
+    ],
+    "ma": 1600,
+    "ma_label": "~1.600",
+    "umsatz": "n.a. (Budget)",
+    "match": 4,
+    "portal": "https://www.gsi.de/en/jobscareer",
+    "groesse": "mittel"
+  },
+  {
+    "name": "pro-beam GmbH & Co. KGaA",
+    "branche": "Industrie",
+    "land": "Deutschland",
+    "laender": [
+      "Deutschland"
+    ],
+    "ma": 300,
+    "ma_label": "~300",
+    "umsatz": "~55 Mio. €",
+    "match": 3,
+    "portal": "https://www.pro-beam.com/karriere/arbeitswelt/pro-beam-als-arbeitgeber/",
+    "groesse": "klein"
   }
 ];
 const jobsData = [
@@ -1503,7 +1608,8 @@ const jobsData = [
     "level": "Einsteiger",
     "anforderungen": "M.Sc. Maschinenbau/Fahrzeugtechnik; Gesamtfahrzeugerprobung; Messtechnik; Daimler Buses (eCitaro, Setra)",
     "link": "https://www.stepstone.de/stellenangebote--Versuchsingenieur-w-m-d-Kundenfahrerprobung-und-Gesamtfahrzeugerprobung-am-Standort-Neu-Ulm-oder-Mannheim-Neu-Ulm-Mannheim-Daimler-Buses-GmbH--14200871-inline.html",
-    "quelle": "StepStone"
+    "quelle": "StepStone",
+    "linkOffline": true
   },
   {
     "title": "Battery Safety Engineer (m/f/d)",
@@ -1513,13 +1619,29 @@ const jobsData = [
     "branche": "Batterie / E-Mobility",
     "remote": "Hybrid",
     "sprache": "Englisch",
-    "veroeffentlicht": "aktuell",
-    "alter_tage": 3,
+    "veroeffentlicht": "vor 2 Wochen",
+    "alter_tage": 13,
     "match": 5,
     "level": "Einsteiger",
     "anforderungen": "M.Sc. Maschinenbau/Elektrotechnik; Li-Ion Batteriesicherheit; Thermal Runaway Testing; Prüfstandserfahrung; Englisch fließend – direkter Fit zur Masterarbeit und Werkstudium bei Porsche Battery Safety",
-    "link": "https://www.stepstone.de/jobs/catl/in-deutschland.html",
-    "quelle": "StepStone"
+    "link": "https://de.indeed.com/jobs?q=CATL+Battery&l=Deutschland",
+    "quelle": "Indeed"
+  },
+  {
+    "title": "Akustik-Ingenieur (w/m/d)",
+    "company": "HEAD acoustics GmbH",
+    "ort": "Herzogenrath, Deutschland",
+    "land": "Deutschland",
+    "branche": "NVH / Akustik",
+    "remote": "Hybrid",
+    "sprache": "Deutsch",
+    "veroeffentlicht": "vor 8 Tagen",
+    "alter_tage": 8,
+    "match": 5,
+    "level": "Einsteiger",
+    "anforderungen": "M.Sc. Maschinenbau/Physik; Akustik- und Schwingungsmesstechnik; NVH-Bewertung; passt direkt zu Fahrzeugkomfort/NVH-Schwerpunkt und experimenteller Messtechnik",
+    "link": "https://www.head-acoustics.com/de/karriere/karriere-detail/show/akustik-ingenieur-w-m-d/",
+    "quelle": "HEAD acoustics Careers"
   },
   {
     "title": "Prüfingenieur Batteriesicherheit / Cell Testing (m/w/d)",
@@ -1552,6 +1674,40 @@ const jobsData = [
     "anforderungen": "M.Sc. Maschinenbau; Prüfstand, Validierung, Messtechnik; E-Antrieb / Batterie von Vorteil; Porsche-Erfahrung willkommen; Direkteinstieg",
     "link": "https://www.fev.com/jobs/",
     "quelle": "FEV Careers"
+  },
+  {
+    "title": "Entwicklungsingenieur*in (d/m/w) TU bzw. M.Sc./M.Eng. mit Schwerpunkt mechanische Konstruktion",
+    "company": "GSI Helmholtzzentrum für Schwerionenforschung GmbH",
+    "ort": "Darmstadt, Deutschland",
+    "land": "Deutschland",
+    "branche": "Forschung",
+    "remote": "Onsite",
+    "sprache": "Deutsch",
+    "veroeffentlicht": "vor 3 Tagen",
+    "alter_tage": 3,
+    "match": 3,
+    "level": "Einsteiger",
+    "anforderungen": "Abgeschlossenes Studium (TU/M.Sc./M.Eng.) mit Schwerpunkt mechanische Konstruktion; kein enger Fachfokus auf Prüfstand/Battery/NVH gefordert – generalistische Konstruktionsstelle im Forschungsumfeld, über Abschluss statt Zielrolle gefunden",
+    "link": "https://www.gsi.de/en/jobscareer/job_offers/job_offers/entwicklungsingenieurin-d-m-w-tu-bzw-msc-meng-mit-schwerpunkt-mechanische-konstruktion-1800",
+    "quelle": "GSI Careers",
+    "herkunft": "abschlussbasiert"
+  },
+  {
+    "title": "Entwicklungsingenieur / Konstrukteur Vorrichtungstechnik (m/w/d)",
+    "company": "pro-beam GmbH & Co. KGaA",
+    "ort": "Burg bei Magdeburg, Deutschland",
+    "land": "Deutschland",
+    "branche": "Industrie",
+    "remote": "Hybrid",
+    "sprache": "Deutsch",
+    "veroeffentlicht": "vor 4 Tagen",
+    "alter_tage": 4,
+    "match": 3,
+    "level": "Einsteiger",
+    "anforderungen": "Abgeschlossenes Maschinenbaustudium (M.Sc./Dipl.-Ing.); Konstruktion von Vorrichtungen für Elektronenstrahlschweißen (Automotive/Luft- & Raumfahrt-Kunden); generalistische Konstrukteursstelle ohne engen Fachfokus auf Sebastians Nischenprofil – über Abschluss statt Zielrolle gefunden",
+    "link": "https://www.stepstone.de/stellenangebote--Entwicklungsingenieur-Konstrukteur-Vorrichtungstechnik-m-w-d-Burg-bei-Magdeburg-pro-beam-GmbH-CO-KGaA--14327096-inline.html",
+    "quelle": "StepStone",
+    "herkunft": "abschlussbasiert"
   }
 ];
 const linkedinQueries = [
@@ -1586,6 +1742,135 @@ const linkedinQueries = [
     "url": "https://www.linkedin.com/jobs/search/?keywords=NVH%20Engineer%20Vehicle%20Comfort%20Acoustics%20Measurement%20Engineer&location=Deutschland&f_WT=1%2C2%2C3&f_E=2%2C3"
   }
 ];
+const herleitungData = {
+  "cvQuellen": [
+    "Curriculum Vitae Sebastian Steinhaeuser 072026.pdf",
+    "Zeugnis KIT Maschinenbau S Steinhäuser.pdf"
+  ],
+  "cvFakten": [
+    {
+      "kategorie": "Ausbildung",
+      "punkte": [
+        "M.Sc. Maschinenbau, KIT – Note 1,6 (Abschluss 05/2026)",
+        "Studienschwerpunkte: Strömungsmechanik, Fahrzeugdynamik, Fahrzeugkomfort & Akustik (NVH)",
+        "Bestnoten in Aerodynamik (1,0), Vortex Dynamics (1,0), Experimentelle Strömungsmechanik (1,0)",
+        "B.Sc. Maschinenbau, KIT – Note 2,5, Spezialisierung Automotive Engineering",
+        "Bachelorarbeit: Hochgeschwindigkeits-Schlieren-Verfahren an Zündfunken (Note 1,7)"
+      ]
+    },
+    {
+      "kategorie": "Berufserfahrung",
+      "punkte": [
+        "Werkstudent Battery Safety, Dr. Ing. h.c. F. Porsche AG (seit 04/2026) – Prüfstand für Serienentwicklung im produktiven Einsatz",
+        "Masterarbeit „Test Bench for Thermal Runaway in Li-Ion Cells“, Porsche AG – Note 1,3, eigenständiger Prüfstandsaufbau",
+        "Forschungsassistent Institute of Fluid Mechanics (ISTM), KIT (2023–2025) – optische Strömungsmesstechnik, Tropfenaufprall-Experimente",
+        "Praktikum Body in White, Porsche AG (2021–2022) – Leckagetests, Prototypenversuche, Nardo-Validierung"
+      ]
+    },
+    {
+      "kategorie": "Methoden & Skills",
+      "punkte": [
+        "Prüfstandsentwicklung, -aufbau und Validierung (eigenständig, von Konzept bis Betrieb)",
+        "Optische Messtechnik: Hochgeschwindigkeitskameras, Thermografie, Laser/Raytracing (Blender)",
+        "Messdatenanalyse: PFV4, PEA, Thermoelemente, Prandtl-Sonden, Datenlogger",
+        "CAD/Konstruktion: CATIA V5, Creo",
+        "CFRP-Fertigung und Prototypenbau"
+      ]
+    },
+    {
+      "kategorie": "Zusatzqualifikationen",
+      "punkte": [
+        "Akaflieg Karlsruhe – Segelflugzeugbau, CFRP-Verarbeitung, Projektkoordination mit Luftfahrtbehörde (LBA)",
+        "Drohnenpilot-Lizenz EASA A1/A3",
+        "Englisch fließend (B2/C1), MS Copilot als Arbeitswerkzeug"
+      ]
+    }
+  ],
+  "suchprofil": [
+    {
+      "dimension": "Zielrollen",
+      "werte": [
+        "Prüfstandsingenieur",
+        "Battery Safety Engineer",
+        "Validation-/Versuchsingenieur",
+        "NVH-Ingenieur",
+        "Aerodynamik-/Strömungsingenieur"
+      ],
+      "begruendung": "Direkt aus Masterarbeit (Prüfstand Thermal Runaway) und laufendem Werkstudium (Battery Safety) sowie den Studienschwerpunkten Strömungsmechanik und NVH abgeleitet."
+    },
+    {
+      "dimension": "Branchen",
+      "werte": [
+        "Automotive",
+        "Automotive Engineering Services",
+        "Batterie / E-Mobility",
+        "Messtechnik",
+        "Luft- & Raumfahrt",
+        "NVH / Akustik",
+        "Forschung"
+      ],
+      "begruendung": "Ergibt sich aus den Praxisstationen bei Porsche (Automotive, Battery Safety), der Forschungstätigkeit am ISTM/KIT sowie der Luftfahrt-Affinität durch Akaflieg und Drohnenpilotenlizenz."
+    },
+    {
+      "dimension": "Länder",
+      "werte": [
+        "Deutschland",
+        "Österreich",
+        "Schweden",
+        "Dänemark"
+      ],
+      "begruendung": "Deutschland als Kernmarkt der Automotive-/Prüfstandsbranche; Österreich, Schweden und Dänemark ergänzend wegen dortiger Testzentren und Zielunternehmen (AVL, Vestas, Westinghouse) im gleichen Fachgebiet."
+    },
+    {
+      "dimension": "Senioritätsstufe",
+      "werte": [
+        "Einsteiger",
+        "Junior (1–3 J.)"
+      ],
+      "begruendung": "Frischer M.Sc.-Abschluss (05/2026) ohne mehrjährige Festanstellung – Suche fokussiert auf Direkteinstieg nach Studienabschluss."
+    },
+    {
+      "dimension": "Suchbegriffe",
+      "werte": [
+        "Test Bench Engineer",
+        "Battery Safety Engineer",
+        "Validation Engineer",
+        "NVH Engineer",
+        "Versuchsingenieur",
+        "Aerodynamics Engineer",
+        "Optische Messtechnik"
+      ],
+      "begruendung": "Übersetzen die CV-Kernbegriffe (Prüfstand, Battery Safety, NVH, Aerodynamik, optische Messtechnik) in gängige Stellentitel bei LinkedIn, StepStone, Indeed und XING."
+    },
+    {
+      "dimension": "Ausschlusskriterien",
+      "werte": [
+        "Reine Softwareentwicklung ohne Hardwarebezug",
+        "Vertrieb/Consulting ohne technischen Kern",
+        "Senior- oder Führungspositionen"
+      ],
+      "begruendung": "Passt nicht zum hands-on Ingenieurprofil mit Prüfstands- und Versuchsschwerpunkt bzw. zur Berufserfahrung eines Berufseinsteigers."
+    },
+    {
+      "dimension": "Abschluss-basierte Breitensuche",
+      "werte": [
+        "Entwicklungsingenieur (m/w/d) generalistisch",
+        "Konstrukteur (m/w/d)",
+        "Ingenieur Maschinenbau Berufseinstieg",
+        "Projektingenieur (m/w/d)"
+      ],
+      "begruendung": "Ergänzt die rollenspezifische Suche: viele Berufseinsteiger-Anzeigen filtern primär über den Abschluss (M.Sc. Maschinenbau) statt über eine enge fachliche Spezialisierung. Diese Anzeigen tauchen bei reiner Zielrollen-Suche nicht zuverlässig auf und werden daher zusätzlich über generische Titel plus Abschlussanforderung gesucht, anschließend gegen Zielbranchen gefiltert."
+    }
+  ],
+  "rechercheSchritte": [
+    "CV, Zeugnis und Praxisstationen gesichtet, Kernfakten aus Ausbildung, Berufserfahrung und Zusatzqualifikationen extrahiert.",
+    "Aus den Fakten Suchprofil-Dimensionen abgeleitet: Zielrollen, Branchen, Länder, Senioritätsstufe, Suchbegriffe und Ausschlusskriterien.",
+    "Mit diesen Dimensionen gezielt auf LinkedIn, StepStone, Indeed, XING und Firmenkarriereseiten recherchiert.",
+    "Zusätzlich eine komplementäre, abschlussbasierte Breitensuche durchgeführt: generische Titel (Entwicklungsingenieur, Konstrukteur, Projektingenieur) kombiniert mit der Abschlussanforderung M.Sc. Maschinenbau, um Anzeigen ohne enge Spezialisierungs-Keywords im Titel zu erfassen; Treffer werden im Jobs-Tab mit dem Herkunfts-Badge 🎓 gekennzeichnet.",
+    "Treffer zu Branchen, Ziel-Firmen, aktuellen Stellenanzeigen und LinkedIn-Suchanfragen verdichtet und in die entsprechenden Dashboard-Tabs überführt.",
+    "Bei jeder Aktualisierung werden Suchprofil und Rechercheergebnisse gegen das aktuellste CV abgeglichen und bei Bedarf angepasst."
+  ]
+};
 // ===== END DATA SECTION =====
 
 
@@ -1738,9 +2023,15 @@ function renderJobs(data) {
     const isNew = j.alter_tage <= 3;
     const neu = isNew ? ' <span style="background:#e8f5e9;color:#2e7d32;font-size:0.68rem;font-weight:700;padding:1px 6px;border-radius:10px;">NEU</span>' : '';
     const vermittlerBadge = j.vermittler ? ' <span class="vermittler-badge" title="Vermittelt durch Personalberatung/Headhunter – der tatsächliche Arbeitgeber wird in dieser Anzeige nicht genannt">🕵️ Vermittlung</span>' : '';
+    const linkWarningBadge = j.linkOffline ? ' <span class="link-warning-badge" title="Diese Stellenanzeige konnte beim letzten Check nicht mehr geöffnet werden und ist ggf. bereits offline. Bitte über die Firmen-Karriereseite prüfen, ob die Stelle noch existiert.">⚠️ ggf. offline</span>' : '';
+    const herkunftBadge = j.herkunft === 'abschlussbasiert' ? ' <span class="herkunft-badge" title="Gefunden über eine breite, abschlussbasierte Suche (M.Sc. Maschinenbau o. ä.), nicht über eine der spezialisierten Zielrollen – die fachliche Spezialisierung ist hier weniger eng gefasst.">🎓 Abschlussbasiert</span>' : '';
+    const firma = firmenData.find(f => f.name.toLowerCase() === j.company.toLowerCase());
+    const fallbackLink = firma && firma.portal !== j.link
+      ? '<a class="apply-btn-fallback" href="' + firma.portal + '" target="_blank">🏢 Firmen-Karriereseite</a>'
+      : '';
     const tr = document.createElement('tr');
     tr.innerHTML =
-      '<td><strong>' + escapeHtml(j.title) + '</strong>' + neu + '</td>' +
+      '<td><strong>' + escapeHtml(j.title) + '</strong>' + neu + linkWarningBadge + herkunftBadge + '</td>' +
       '<td><div class="cell-company"><div class="company-logo">' + logoInitials(j.company) + '</div>' + escapeHtml(j.company) + vermittlerBadge + '</div></td>' +
       '<td>' + escapeHtml(j.ort) + '</td>' +
       '<td>' + brancheBadge(j.branche) + '</td>' +
@@ -1750,7 +2041,7 @@ function renderJobs(data) {
       '<td>' + escapeHtml(j.veroeffentlicht) + '</td>' +
       '<td>' + starsHTML(ms) + '</td>' +
       '<td style="max-width:260px;font-size:0.78rem;color:var(--muted);">' + escapeHtml(j.anforderungen) + '</td>' +
-      '<td><a class="apply-btn" href="' + j.link + '" target="_blank">Jetzt bewerben →</a></td>';
+      '<td><div class="apply-btn-group"><a class="apply-btn" href="' + j.link + '" target="_blank">Jetzt bewerben →</a>' + fallbackLink + '</div></td>';
     tbody.appendChild(tr);
   });
   document.getElementById('jobs-no-results').style.display = data.length === 0 ? 'block' : 'none';
@@ -1771,9 +2062,11 @@ function renderTracker() {
     if (activeTrackerFilter && state.status !== activeTrackerFilter) return;
     shown++;
     const trackerVermittlerBadge = j.vermittler ? ' <span class="vermittler-badge" title="Vermittelt durch Personalberatung/Headhunter – der tatsächliche Arbeitgeber wird in dieser Anzeige nicht genannt">🕵️</span>' : '';
+    const trackerLinkWarningBadge = j.linkOffline ? ' <span class="link-warning-badge" title="Diese Stellenanzeige konnte beim letzten Check nicht mehr geöffnet werden und ist ggf. bereits offline. Bitte über die Firmen-Karriereseite prüfen, ob die Stelle noch existiert.">⚠️</span>' : '';
+    const trackerHerkunftBadge = j.herkunft === 'abschlussbasiert' ? ' <span class="herkunft-badge" title="Gefunden über eine breite, abschlussbasierte Suche (M.Sc. Maschinenbau o. ä.), nicht über eine der spezialisierten Zielrollen.">🎓</span>' : '';
     const tr = document.createElement('tr');
     tr.innerHTML =
-      '<td><strong>' + escapeHtml(j.title) + '</strong></td>' +
+      '<td><strong>' + escapeHtml(j.title) + '</strong>' + trackerLinkWarningBadge + trackerHerkunftBadge + '</td>' +
       '<td>' + escapeHtml(j.company) + trackerVermittlerBadge + '</td>' +
       '<td>' + escapeHtml(j.ort) + '</td>' +
       '<td>' + starsHTML(getJobMatch(j)) + '</td>' +
@@ -1833,6 +2126,72 @@ function renderLinkedIn() {
   if (tipCo && PROFILE.linkedinCompaniesTipp) tipCo.innerHTML = PROFILE.linkedinCompaniesTipp;
 }
 
+// ===== RENDER: HERLEITUNG (CV -> Suchprofil -> Recherche) =====
+function renderHerleitung() {
+  const cvWrap = document.getElementById('herleitung-cv-cards');
+  const spWrap = document.getElementById('herleitung-suchprofil-cards');
+  const brWrap = document.getElementById('herleitung-branchen-cards');
+  const stepsWrap = document.getElementById('herleitung-steps-list');
+  const statsWrap = document.getElementById('herleitung-result-stats');
+  const emptyMsg = document.getElementById('herleitung-empty');
+  if (!cvWrap) return;
+
+  const hasData = herleitungData && (
+    (herleitungData.cvFakten && herleitungData.cvFakten.length) ||
+    (herleitungData.suchprofil && herleitungData.suchprofil.length)
+  );
+  emptyMsg.style.display = hasData ? 'none' : 'block';
+  if (!hasData) {
+    cvWrap.innerHTML = ''; spWrap.innerHTML = ''; brWrap.innerHTML = ''; stepsWrap.innerHTML = ''; statsWrap.innerHTML = '';
+    return;
+  }
+
+  cvWrap.innerHTML = (herleitungData.cvFakten || []).map(k =>
+    '<div class="herleitung-card"><h4>' + escapeHtml(k.kategorie) + '</h4><ul>' +
+    (k.punkte || []).map(p => '<li>' + escapeHtml(p) + '</li>').join('') + '</ul></div>'
+  ).join('');
+
+  spWrap.innerHTML = (herleitungData.suchprofil || []).map(d =>
+    '<div class="herleitung-card"><h4>' + escapeHtml(d.dimension) + '</h4><div>' +
+    (d.werte || []).map(w => '<span class="herleitung-chip herleitung-chip-static">' + escapeHtml(w) + '</span>').join('') +
+    '</div>' + (d.begruendung ? '<div class="herleitung-begruendung">' + escapeHtml(d.begruendung) + '</div>' : '') + '</div>'
+  ).join('');
+
+  statsWrap.innerHTML =
+    '<div class="stat-card"><div class="number">' + firmenData.length + '</div><div class="label">Firmen recherchiert</div></div>' +
+    '<div class="stat-card"><div class="number">' + jobsData.length + '</div><div class="label">Stellen gefunden</div></div>' +
+    '<div class="stat-card"><div class="number">' + linkedinQueries.length + '</div><div class="label">LinkedIn-Suchprofile</div></div>';
+
+  const branchenDim = (herleitungData.suchprofil || []).find(d => /branche/i.test(d.dimension));
+  const branchen = branchenDim && branchenDim.werte && branchenDim.werte.length
+    ? branchenDim.werte
+    : [...new Set(firmenData.map(f => f.branche))].sort();
+
+  brWrap.innerHTML = branchen.map(b => {
+    const fCount = firmenData.filter(f => f.branche === b).length;
+    const jCount = jobsData.filter(j => j.branche === b).length;
+    const safeB = b.replace(/'/g, "\\'");
+    return '<div class="herleitung-card">' +
+      '<h4>' + escapeHtml(b) + '</h4>' +
+      '<span class="herleitung-chip" onclick="jumpToBranche(\'firmen\',\'' + safeB + '\')">🏢 ' + fCount + ' Firmen ansehen</span>' +
+      '<span class="herleitung-chip" onclick="jumpToBranche(\'jobs\',\'' + safeB + '\')">📋 ' + jCount + ' Stellen ansehen</span>' +
+      '</div>';
+  }).join('');
+
+  stepsWrap.innerHTML = (herleitungData.rechercheSchritte || []).map(s => '<li style="margin-bottom:6px;">' + escapeHtml(s) + '</li>').join('');
+}
+
+function jumpToBranche(tab, branche) {
+  switchTab(tab);
+  if (tab === 'firmen') {
+    const sel = document.getElementById('f-branche');
+    if (sel) { sel.value = branche; filterFirmen(); }
+  } else if (tab === 'jobs') {
+    const sel = document.getElementById('f-job-branche');
+    if (sel) { sel.value = branche; filterJobs(); }
+  }
+}
+
 // ===== HEADER & DROPDOWNS =====
 function initHeader() {
   document.getElementById('header-title').textContent = '🎯 Job-Dashboard – ' + PROFILE.name;
@@ -1877,7 +2236,7 @@ function quickFilterJobs(type) {
     activeJobQuickFilter = null; updateJobStatCardActive(); renderJobs(jobsData); return;
   }
   activeJobQuickFilter = type;
-  ['f-job-search','f-job-branche','f-job-land','f-job-remote','f-job-match','f-job-sprache','f-job-level'].forEach(id => {
+  ['f-job-search','f-job-branche','f-job-land','f-job-remote','f-job-match','f-job-sprache','f-job-level','f-job-herkunft'].forEach(id => {
     const el = document.getElementById(id); if (el) el.value = '';
   });
   let filtered;
@@ -1957,6 +2316,7 @@ function filterJobs() {
   const match   = parseInt(document.getElementById('f-job-match').value) || 0;
   const sprache = document.getElementById('f-job-sprache').value;
   const level   = document.getElementById('f-job-level').value;
+  const herkunft = document.getElementById('f-job-herkunft').value;
   const filtered = jobsData.filter(j => {
     if (search  && !(j.title + j.company + j.ort).toLowerCase().includes(search)) return false;
     if (branche && j.branche !== branche) return false;
@@ -1965,6 +2325,7 @@ function filterJobs() {
     if (match   && getJobMatch(j) < match) return false;
     if (sprache && j.sprache !== sprache) return false;
     if (level   && j.level !== level) return false;
+    if (herkunft && (j.herkunft || 'rollenspezifisch') !== herkunft) return false;
     return true;
   });
   renderJobs(filtered);
@@ -1972,7 +2333,7 @@ function filterJobs() {
 
 function resetJobFilter() {
   activeJobQuickFilter = null; updateJobStatCardActive();
-  ['f-job-search','f-job-branche','f-job-land','f-job-remote','f-job-match','f-job-sprache','f-job-level'].forEach(id => {
+  ['f-job-search','f-job-branche','f-job-land','f-job-remote','f-job-match','f-job-sprache','f-job-level','f-job-herkunft'].forEach(id => {
     const el = document.getElementById(id); if (el) el.value = '';
   });
   renderJobs(jobsData);
@@ -1983,10 +2344,11 @@ function switchTab(name) {
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
   document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
   document.getElementById('tab-' + name).classList.add('active');
-  ['firmen','jobs','tracker','linkedin'].forEach((t, i) => {
+  ['firmen','jobs','tracker','linkedin','herleitung'].forEach((t, i) => {
     if (t === name) document.querySelectorAll('.tab')[i].classList.add('active');
   });
   if (name === 'tracker') renderTracker();
+  if (name === 'herleitung') renderHerleitung();
 }
 
 // ===== SORTIERUNG =====
@@ -2140,6 +2502,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (topCount) topCount.textContent = firmenData.filter(f => getFirmaMatch(f) === 5).length;
   renderJobs(jobsData);
   renderLinkedIn();
+  renderHerleitung();
   loadTrackerState();
   updateTrackerStats();
   bootstrapTrackerFromRepo();
