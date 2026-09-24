@@ -1,4 +1,4 @@
-﻿const CACHE_NAME = 'jobs-sebastian-24092026c';
+﻿const CACHE_NAME = 'jobs-sebastian-24092026d';
 const ASSETS = [
   './sebastian_jobs_dashboard.html',
   './sebastian_suchradius.html',
@@ -34,4 +34,4 @@ self.addEventListener('fetch', event => {
       });
     })
   );
-});// Cache invalidation: Do 24. Sep 2026c (Neue Branchen/Firmen im Suchradius)
+});// Cache invalidation: Do 24. Sep 2026d (Drohnen/UAV ergänzt)
