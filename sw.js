@@ -1,6 +1,7 @@
-﻿const CACHE_NAME = 'jobs-sebastian-21072026';
+﻿const CACHE_NAME = 'jobs-sebastian-24092026';
 const ASSETS = [
   './sebastian_jobs_dashboard.html',
+  './sebastian_suchradius.html',
   './manifest.json',
   './icon.svg'
 ];
@@ -33,4 +34,4 @@ self.addEventListener('fetch', event => {
       });
     })
   );
-});// Cache invalidation: Di 21. Jul 23:03:17 CEST 2026
+});// Cache invalidation: Do 24. Sep 2026 (Suchradius-Seite ergänzt)
