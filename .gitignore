@@ -5,8 +5,13 @@
 !.gitignore
 !index.html
 !sebastian_jobs_dashboard.html
+!sebastian_suchradius.html
 !manifest.json
 !sw.js
 !icon.svg
 !data/
 !data/tracker_sebastian.json
+!.github/
+!.github/skills/
+!.github/skills/job-dashboard-aktualisieren/
+!.github/skills/job-dashboard-aktualisieren/**

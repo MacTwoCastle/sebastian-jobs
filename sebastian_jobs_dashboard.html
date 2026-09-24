@@ -175,6 +175,7 @@
   <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
     <span class="badge" id="header-status"></span>
     <span id="stand-datum" style="background:#254d78;color:#fff;padding:4px 12px;border-radius:20px;font-size:0.75rem;font-weight:600;"></span>
+    <a id="scope-link" href="#" style="display:none;background:#254d78;color:#fff;padding:4px 12px;border-radius:20px;font-size:0.75rem;font-weight:600;text-decoration:none;">🔎 Suchradius</a>
   </div>
 </div>
 
@@ -456,7 +457,7 @@ const PROFILE = {
   "slug": "sebastian",
   "subtitle": "M.Sc. Maschinenbau (1,6) · Prüfstandsentwicklung · Battery Safety & Validierung · Experimentelle Strömungsmechanik · Fahrzeugkomfort / NVH · Aerodynamik",
   "searchStatus": "Aktiv suchend – M.Sc. 1,6 abgeschlossen 05/2026 · Werkstudent Porsche AG Battery Safety (seit 04/2026)",
-  "standDatum": "30.08.2026",
+  "standDatum": "24.09.2026",
   "skills": [
     "Prüfstandsentwicklung",
     "Batteriesicherheit",
@@ -512,7 +513,7 @@ const PROFILE = {
     "Dänemark"
   ],
   "firmenInfobox": "<strong>Profil-Matching:</strong> Im Fokus stehen Unternehmen, bei denen Sebastians Profil aus <strong>Prüfstandsentwicklung, Battery Safety (Li-Ion / Thermal Runaway), experimenteller Strömungsmechanik, NVH/Fahrzeugkomfort, Fahrzeugversuch, optischer Messtechnik und hands-on Fertigung</strong> direkt anschlussfähig ist. Priorisiert werden Automotive-Entwicklung, Validierung, Battery/E-Mobility, Messtechnik, Prüfdienstleistungen und ausgewählte Luft- &amp; Raumfahrt-Rollen.",
-  "jobsInfobox": "<strong>Quellen:</strong> LinkedIn, StepStone, Indeed, XING und Karriereseiten – selektiv aktualisiert am 30.08.2026. Priorisiert sind Einstiegs- und Juniorrollen mit klarem Bezug zu Prüfstand, Validierung, Battery Safety, Versuch, Fahrzeugentwicklung, NVH/Fahrzeugkomfort, Aerodynamik, optischer Messtechnik und technischen Prüfdienstleistungen. Klicke auf <em>Jetzt bewerben</em> für den direkten Link zur Stellenanzeige.",
+  "jobsInfobox": "<strong>Quellen:</strong> LinkedIn, StepStone, Indeed, XING und Karriereseiten – selektiv aktualisiert am 24.09.2026. Priorisiert sind Einstiegs- und Juniorrollen mit klarem Bezug zu Prüfstand, Validierung, Battery Safety, Versuch, Fahrzeugentwicklung, NVH/Fahrzeugkomfort, Aerodynamik, optischer Messtechnik und technischen Prüfdienstleistungen. Klicke auf <em>Jetzt bewerben</em> für den direkten Link zur Stellenanzeige.",
   "linkedinKeywordsTipp": "Empfohlene Keywords: <em>Test Bench Engineer, Battery Safety Engineer, Prüfstandsingenieur, Validation Engineer, Versuchsingenieur, NVH Engineer, Vehicle Testing, Optische Messtechnik, Aerodynamics Engineer, Lightweight Engineer</em>",
   "linkedinCompaniesTipp": "Profile von Firmen wie <strong>Porsche, Porsche Engineering, IAV, ATESTEO, FEV Group, Polytec, Kistler, AVL, TÜV SÜD, HEAD acoustics, Audi, MAN Truck & Bus, CATL und Schempp-Hirth</strong> direkt folgen"
 };
@@ -1648,6 +1649,22 @@ const jobsData = [
     "linkOffline": true
   },
   {
+    "title": "Projektingenieur (m/w/d) für Batterie-Speichersysteme für Elektrofahrzeuge",
+    "company": "FEV eDLP GmbH",
+    "ort": "Sandersdorf, Deutschland",
+    "land": "Deutschland",
+    "branche": "Batterie / E-Mobility",
+    "remote": "Onsite",
+    "sprache": "Deutsch",
+    "veroeffentlicht": "aktuell (24.09.2026)",
+    "alter_tage": 0,
+    "match": 4,
+    "level": "Einsteiger",
+    "anforderungen": "Maschinenbau-/Elektrotechnikstudium; Projektarbeit an Batterie-Speichersystemen für E-Fahrzeuge; direkter Anschluss an Sebastians Battery-Safety- und Prüfstandserfahrung bei Porsche, FEV ist zudem bereits als Prüfstandsarbeitgeber im Profil bekannt",
+    "link": "https://www.fev.com/jobs/",
+    "quelle": "FEV Careers"
+  },
+  {
     "title": "Battery Safety Engineer (m/f/d)",
     "company": "CATL Europe GmbH",
     "ort": "München, Deutschland",
@@ -1688,12 +1705,12 @@ const jobsData = [
     "branche": "NVH / Akustik",
     "remote": "Hybrid",
     "sprache": "Deutsch",
-    "veroeffentlicht": "vor 7 Tagen (23.08.2026)",
-    "alter_tage": 7,
+    "veroeffentlicht": "aktuell (bestätigt am 24.09.2026)",
+    "alter_tage": 0,
     "match": 5,
     "level": "Einsteiger",
     "anforderungen": "Ingenieur- oder Physikstudium mit Akustikbezug; akustische Messungen, Messapparaturen, Testprozeduren und Grundkenntnisse numerischer Simulation; sehr direkter Fit zu NVH, Messtechnik und experimenteller Methodik",
-    "link": "https://www.head-acoustics.com/de/karriere/karriere-detail/show/akustik-ingenieur-w-m-d/",
+    "link": "https://www.head-acoustics.com/de/karriere/karriere-detail/akustik-ingenieur-w-m-d/",
     "quelle": "HEAD acoustics Careers"
   },
   {
@@ -1986,6 +2003,7 @@ const herleitungData = {
     "Bei jeder Aktualisierung werden Suchprofil und Rechercheergebnisse gegen das aktuellste CV abgeglichen und bei Bedarf angepasst; nicht mehr erreichbare Originalanzeigen bleiben mit Offline-Hinweis im Dashboard sichtbar."
   ]
 };
+const HAS_SUCHRADIUS = true;
 // ===== END DATA SECTION =====
 
 
@@ -2318,6 +2336,11 @@ function initHeader() {
   if (metaTitle) metaTitle.content = 'Jobs – ' + PROFILE.name.split(' ')[0];
   if (PROFILE.firmenInfobox) document.getElementById('firmen-infobox').innerHTML = PROFILE.firmenInfobox;
   if (PROFILE.jobsInfobox)   document.getElementById('jobs-infobox').innerHTML   = PROFILE.jobsInfobox;
+  if (typeof HAS_SUCHRADIUS !== 'undefined' && HAS_SUCHRADIUS && PROFILE.slug) {
+    const scopeLink = document.getElementById('scope-link');
+    scopeLink.href = PROFILE.slug + '_suchradius.html';
+    scopeLink.style.display = 'inline-block';
+  }
 }
 
 function initFilterDropdowns() {

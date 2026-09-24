@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Suchradius</title>
+<link rel="apple-touch-icon" href="icon.svg">
+<style>
+  :root {
+    --primary: #1a3a5c;
+    --accent: #e87722;
+    --bg: #f4f7fb;
+    --card: #ffffff;
+    --border: #d0d8e4;
+    --text: #1e2a38;
+    --muted: #6b7a8d;
+    --green: #27ae60;
+    --green-bg: #e8f5e9;
+    --grey-bg: #eef1f5;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; background: var(--bg); color: var(--text); font-size: 14px; }
+
+  .header { background: var(--primary); color: #fff; padding: 18px 28px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+  .header .sub { font-size: 0.8rem; opacity: 0.75; margin-top: 2px; }
+  .header a.back-link { color: #fff; background: #254d78; padding: 6px 14px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; text-decoration: none; }
+  .header a.back-link:hover { background: #2f5f92; }
+
+  .container { padding: 24px 28px; max-width: 1400px; margin: 0 auto; }
+
+  .info-box { background: #e3f2fd; border: 1px solid #90caf9; border-radius: 8px; padding: 12px 16px; margin-bottom: 20px; font-size: 0.86rem; color: #1565c0; }
+  .info-box strong { font-weight: 700; }
+
+  .stats-row { display: flex; gap: 16px; margin-bottom: 22px; flex-wrap: wrap; }
+  .stat-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 14px 20px; flex: 1; min-width: 160px; }
+  .stat-card .number { font-size: 1.8rem; font-weight: 800; color: var(--primary); }
+  .stat-card .label { font-size: 0.75rem; color: var(--muted); margin-top: 2px; }
+
+  .kategorie-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 18px 20px; margin-bottom: 16px; }
+  .kategorie-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; flex-wrap: wrap; gap: 8px; }
+  .kategorie-head h2 { font-size: 1rem; color: var(--primary); }
+  .kategorie-count { background: var(--primary); color: #fff; padding: 3px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; }
+
+  .firmen-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip { display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px; border-radius: 16px; font-size: 0.8rem; font-weight: 600; border: 1px solid var(--border); }
+  .chip.treffer { background: var(--green-bg); color: var(--green); border-color: #b8e0bd; }
+  .chip.beobachtet { background: var(--grey-bg); color: var(--muted); }
+  .chip a { color: inherit; text-decoration: none; }
+  .chip a:hover { text-decoration: underline; }
+
+  .portale-liste { font-size: 0.82rem; color: var(--muted); margin-bottom: 18px; }
+  .portale-liste strong { color: var(--text); }
+
+  .no-results { text-align: center; padding: 40px 20px; color: var(--muted); font-size: 0.95rem; }
+
+  @media(max-width: 700px) { .container { padding: 14px; } .stats-row { flex-direction: column; } }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <div style="font-size:1.25rem;font-weight:800;letter-spacing:-.3px;" id="header-title">🔎 Suchradius</div>
+    <div class="sub" id="header-subtitle"></div>
+  </div>
+  <a class="back-link" id="back-link" href="#">⟵ Zurück zum Dashboard</a>
+</div>
+
+<div class="container">
+
+  <div class="info-box" id="scope-infobox">
+    Diese Seite zeigt, wie breit der Firmen-Suchraum recherchiert wurde – auch Firmen und Kategorien, in denen aktuell kein passender Treffer gefunden wurde. Sie ergänzt die Firmenübersicht im Dashboard und verändert diese nicht.
+  </div>
+
+  <div class="portale-liste" id="portale-liste"></div>
+
+  <div class="stats-row" id="stats-row"></div>
+
+  <div id="kategorien-liste"></div>
+
+  <div class="no-results" id="scope-empty" style="display:none;">Für dieses Profil liegt noch keine Suchradius-Recherche vor.</div>
+
+</div>
+
+<script>
+// ===== DATA: SCOPE (auto-generated - do not edit manually) =====
+const PROFILE = {
+  "name": "Sebastian Steinhäuser",
+  "slug": "sebastian",
+  "subtitle": "M.Sc. Maschinenbau (1,6) · Prüfstandsentwicklung · Battery Safety & Validierung · Experimentelle Strömungsmechanik · Fahrzeugkomfort / NVH · Aerodynamik",
+  "searchStatus": "Aktiv suchend – M.Sc. 1,6 abgeschlossen 05/2026 · Werkstudent Porsche AG Battery Safety (seit 04/2026)",
+  "standDatum": "24.09.2026",
+  "skills": [
+    "Prüfstandsentwicklung",
+    "Batteriesicherheit",
+    "Validierung",
+    "Versuch",
+    "Experimentelle Strömungsmechanik",
+    "Aerodynamik",
+    "Messtechnik",
+    "Fahrzeugerprobung",
+    "Fahrzeugkomfort & Akustik (NVH)",
+    "Fahrzeugleichtbau",
+    "Lasertechnik (Grundlagen)",
+    "Werkstoffkunde",
+    "Modellbildung & Simulation",
+    "Body in White",
+    "Leckagetests",
+    "Optische Messtechnik",
+    "Hochgeschwindigkeitskameras",
+    "Thermografie",
+    "Thermoelemente",
+    "Prandtl-Sonden",
+    "Datenlogger",
+    "PFV4",
+    "PEA",
+    "CATIA V5",
+    "Creo",
+    "Blender",
+    "Raytracing",
+    "CFRP",
+    "Fertigung",
+    "Prototypenbau",
+    "Akaflieg",
+    "Drohnenpilot EASA A1/A3",
+    "MS Copilot"
+  ],
+  "branchen": [
+    "Automotive",
+    "Automotive Engineering Services",
+    "Messtechnik",
+    "Luft- & Raumfahrt",
+    "Forschung",
+    "Industrie",
+    "Batterie / E-Mobility",
+    "NVH / Akustik",
+    "Prüfdienstleistungen",
+    "Energie",
+    "Verteidigung"
+  ],
+  "laender": [
+    "Deutschland",
+    "Österreich",
+    "Schweden",
+    "Dänemark"
+  ],
+  "firmenInfobox": "<strong>Profil-Matching:</strong> Im Fokus stehen Unternehmen, bei denen Sebastians Profil aus <strong>Prüfstandsentwicklung, Battery Safety (Li-Ion / Thermal Runaway), experimenteller Strömungsmechanik, NVH/Fahrzeugkomfort, Fahrzeugversuch, optischer Messtechnik und hands-on Fertigung</strong> direkt anschlussfähig ist. Priorisiert werden Automotive-Entwicklung, Validierung, Battery/E-Mobility, Messtechnik, Prüfdienstleistungen und ausgewählte Luft- &amp; Raumfahrt-Rollen.",
+  "jobsInfobox": "<strong>Quellen:</strong> LinkedIn, StepStone, Indeed, XING und Karriereseiten – selektiv aktualisiert am 24.09.2026. Priorisiert sind Einstiegs- und Juniorrollen mit klarem Bezug zu Prüfstand, Validierung, Battery Safety, Versuch, Fahrzeugentwicklung, NVH/Fahrzeugkomfort, Aerodynamik, optischer Messtechnik und technischen Prüfdienstleistungen. Klicke auf <em>Jetzt bewerben</em> für den direkten Link zur Stellenanzeige.",
+  "linkedinKeywordsTipp": "Empfohlene Keywords: <em>Test Bench Engineer, Battery Safety Engineer, Prüfstandsingenieur, Validation Engineer, Versuchsingenieur, NVH Engineer, Vehicle Testing, Optische Messtechnik, Aerodynamics Engineer, Lightweight Engineer</em>",
+  "linkedinCompaniesTipp": "Profile von Firmen wie <strong>Porsche, Porsche Engineering, IAV, ATESTEO, FEV Group, Polytec, Kistler, AVL, TÜV SÜD, HEAD acoustics, Audi, MAN Truck & Bus, CATL und Schempp-Hirth</strong> direkt folgen"
+};
+const SUCHRADIUS = {
+  "standDatum": "24.09.2026",
+  "durchsuchtePortale": [
+    "LinkedIn Jobs",
+    "StepStone",
+    "Indeed",
+    "XING",
+    "Firmen-Karriereseiten"
+  ],
+  "kategorien": [
+    {
+      "name": "Automotive",
+      "firmen": [
+        {
+          "name": "BMW AG",
+          "status": "treffer",
+          "portal": "https://www.bmwgroup.jobs/de/"
+        },
+        {
+          "name": "Porsche AG",
+          "status": "treffer",
+          "portal": "https://www.porsche.com/germany/aboutporsche/jobs/"
+        },
+        {
+          "name": "Mercedes-Benz AG",
+          "status": "treffer",
+          "portal": "https://www.mercedes-benz.com/de/career/"
+        },
+        {
+          "name": "MAHLE GmbH",
+          "status": "treffer",
+          "portal": "https://jobs.mahle.com/"
+        },
+        {
+          "name": "MAN Truck & Bus Group",
+          "status": "treffer",
+          "portal": "https://www.stepstone.de/cmp/de/man-truck-%26-bus-group-29656/jobs"
+        },
+        {
+          "name": "AUDI AG",
+          "status": "treffer",
+          "portal": "https://www.audi.com/de/careers.html"
+        },
+        {
+          "name": "Daimler Buses GmbH",
+          "status": "treffer",
+          "portal": "https://www.daimlertruck.com/karriere"
+        },
+        {
+          "name": "Volkswagen AG",
+          "status": "beobachtet"
+        },
+        {
+          "name": "Opel Automobile GmbH",
+          "status": "beobachtet"
+        }
+      ]
+    },
+    {
+      "name": "Automotive Engineering Services",
+      "firmen": [
+        {
+          "name": "Porsche Engineering Group GmbH",
+          "status": "treffer",
+          "portal": "https://www.porscheengineering.com/peg/de/career/jobs/"
+        },
+        {
+          "name": "IAV GmbH",
+          "status": "treffer",
+          "portal": "https://www.iav.com/de/karriere/jobangebote/"
+        },
+        {
+          "name": "ATESTEO GmbH & Co. KG",
+          "status": "treffer",
+          "portal": "https://atesteo.com/jobs/"
+        },
+        {
+          "name": "Bosch Engineering GmbH",
+          "status": "treffer",
+          "portal": "https://www.bosch.de/karriere/"
+        },
+        {
+          "name": "AVL MTC Motortestcenter AB",
+          "status": "treffer",
+          "portal": "https://jobs.avl.com/job/S%C3%B6dert%C3%A4lje-Provcellsingenj%C3%B6r-Test-Bed-Engineer/1376586733/"
+        },
+        {
+          "name": "EDAG Group",
+          "status": "treffer",
+          "portal": "https://www.edag.com/de/karriere/stellenanzeigen"
+        },
+        {
+          "name": "FEV Group GmbH",
+          "status": "treffer",
+          "portal": "https://www.fev.com/jobs/"
+        },
+        {
+          "name": "Bertrandt AG",
+          "status": "beobachtet"
+        },
+        {
+          "name": "Brose Fahrzeugteile SE & Co. KG",
+          "status": "beobachtet"
+        }
+      ]
+    },
+    {
+      "name": "Messtechnik",
+      "firmen": [
+        {
+          "name": "Kistler Group",
+          "status": "treffer",
+          "portal": "https://www.kistler.com/DE/de/jobs-und-karriere/career"
+        },
+        {
+          "name": "Polytec GmbH",
+          "status": "treffer",
+          "portal": "https://www.polytec.com/de/karriere/"
+        },
+        {
+          "name": "Hottinger Brüel & Kjær (HBK)",
+          "status": "treffer",
+          "portal": "https://www.hbkworld.com/de/karriere"
+        },
+        {
+          "name": "Carl Zeiss AG",
+          "status": "treffer",
+          "portal": "https://www.zeiss.com/corporate/de_de/careers.html"
+        },
+        {
+          "name": "National Instruments (NI)",
+          "status": "beobachtet"
+        },
+        {
+          "name": "Rohde & Schwarz GmbH & Co. KG",
+          "status": "beobachtet"
+        }
+      ]
+    },
+    {
+      "name": "Luft- & Raumfahrt",
+      "firmen": [
+        {
+          "name": "Airbus SE",
+          "status": "treffer",
+          "portal": "https://www.airbus.com/en/careers"
+        },
+        {
+          "name": "MTU Aero Engines AG",
+          "status": "treffer",
+          "portal": "https://www.mtu.de/de/karriere/"
+        },
+        {
+          "name": "Isar Aerospace SE",
+          "status": "treffer",
+          "portal": "https://www.isaraerospace.com/careers"
+        },
+        {
+          "name": "Rolls-Royce Deutschland Ltd & Co KG",
+          "status": "treffer",
+          "portal": "https://careers.rolls-royce.com/"
+        },
+        {
+          "name": "Schempp-Hirth Flugzeugbau GmbH",
+          "status": "treffer",
+          "portal": "https://www.schempp-hirth.com/unternehmen/ausbildungsplaetze-und-offene-stellen"
+        },
+        {
+          "name": "HESYS TechnicalSystems / Airbus",
+          "status": "treffer",
+          "portal": "https://hesys-engineering.de/jobs/"
+        },
+        {
+          "name": "OHB SE",
+          "status": "beobachtet"
+        },
+        {
+          "name": "Diehl Aerospace GmbH",
+          "status": "beobachtet"
+        }
+      ]
+    },
+    {
+      "name": "Forschung",
+      "firmen": [
+        {
+          "name": "DLR – Deutsches Zentrum für Luft- und Raumfahrt",
+          "status": "treffer",
+          "portal": "https://www.dlr.de/de/karriere"
+        },
+        {
+          "name": "Fraunhofer-Gesellschaft",
+          "status": "treffer",
+          "portal": "https://www.fraunhofer.de/de/jobs-und-karriere.html"
+        },
+        {
+          "name": "SHENGU Europäisches Forschungszentrum GmbH",
+          "status": "treffer",
+          "portal": "https://www.stepstone.de/cmp/de/shengu-europaeisches-forschungszentrum-gmbh-227497/jobs.html"
+        },
+        {
+          "name": "RWTH Aachen University",
+          "status": "treffer",
+          "portal": "https://www.rwth-aachen.de/go/id/hxz"
+        },
+        {
+          "name": "GSI Helmholtzzentrum für Schwerionenforschung GmbH",
+          "status": "treffer",
+          "portal": "https://www.gsi.de/en/jobscareer"
+        },
+        {
+          "name": "Max-Planck-Institut",
+          "status": "beobachtet"
+        },
+        {
+          "name": "Deutsches Institut für Luft- und Raumfahrttechnik (Uni-Institute)",
+          "status": "beobachtet"
+        }
+      ]
+    },
+    {
+      "name": "Industrie",
+      "firmen": [
+        {
+          "name": "Voith GmbH & Co. KGaA",
+          "status": "treffer",
+          "portal": "https://www.voith.com/de/unternehmen/karriere.html"
+        },
+        {
+          "name": "Wingfan Ltd. & Co. KG",
+          "status": "treffer",
+          "portal": "https://www.stepstone.de/cmp/de/Wingfan-Ltd-Co-KG-425087/jobs.html"
+        },
+        {
+          "name": "TRUMPF SE + Co. KG",
+          "status": "treffer",
+          "portal": "https://www.trumpf.com/de_DE/unternehmen/karriere/"
+        },
+        {
+          "name": "ALTEN Consulting Services GmbH",
+          "status": "treffer",
+          "portal": "https://www.alten.com/de/karriere/"
+        },
+        {
+          "name": "FERCHAU GmbH",
+          "status": "treffer",
+          "portal": "https://www.ferchau.com/de/de/karriere"
+        },
+        {
+          "name": "Siemens AG",
+          "status": "treffer",
+          "portal": "https://jobs.siemens.com/careers"
+        },
+        {
+          "name": "pro-beam GmbH & Co. KGaA",
+          "status": "treffer",
+          "portal": "https://www.pro-beam.com/karriere/arbeitswelt/pro-beam-als-arbeitgeber/"
+        },
+        {
+          "name": "ZF Friedrichshafen AG",
+          "status": "beobachtet"
+        },
+        {
+          "name": "Continental AG",
+          "status": "beobachtet"
+        }
+      ]
+    },
+    {
+      "name": "Batterie / E-Mobility",
+      "firmen": [
+        {
+          "name": "CATL Europe GmbH",
+          "status": "treffer",
+          "portal": "https://de.indeed.com/jobs?q=CATL+Battery&l=Deutschland"
+        },
+        {
+          "name": "Northvolt AB",
+          "status": "beobachtet"
+        },
+        {
+          "name": "VARTA AG",
+          "status": "beobachtet"
+        }
+      ]
+    },
+    {
+      "name": "NVH / Akustik",
+      "firmen": [
+        {
+          "name": "Müller-BBM GmbH",
+          "status": "treffer",
+          "portal": "https://www.muellerbbm.de/karriere/"
+        },
+        {
+          "name": "HEAD acoustics GmbH",
+          "status": "treffer",
+          "portal": "https://www.head-acoustics.com/de/karriere"
+        },
+        {
+          "name": "AVL List GmbH",
+          "status": "treffer",
+          "portal": "https://www.avl.com/de/career"
+        },
+        {
+          "name": "KOSTAL Automobil Elektrik GmbH & Co. KG",
+          "status": "treffer",
+          "portal": "https://www.kostal.com/de/karriere"
+        },
+        {
+          "name": "Brüel & Kjær Deutschland",
+          "status": "beobachtet"
+        },
+        {
+          "name": "Fraunhofer LBF",
+          "status": "beobachtet"
+        }
+      ]
+    },
+    {
+      "name": "Prüfdienstleistungen",
+      "firmen": [
+        {
+          "name": "TÜV SÜD AG",
+          "status": "treffer",
+          "portal": "https://jobs.tuvsud.com/search?facetFilters=%7B%22cust_brand%22%3A%5B%22T%C3%9CV+S%C3%9CD%22%5D%2C%22jobLocationCountry%22%3A%5B%22Deutschland%22%5D%7D&locale=de_DE"
+        },
+        {
+          "name": "DEKRA SE",
+          "status": "beobachtet"
+        },
+        {
+          "name": "TÜV Rheinland AG",
+          "status": "beobachtet"
+        }
+      ]
+    },
+    {
+      "name": "Energie",
+      "firmen": [
+        {
+          "name": "Siemens Energy AG",
+          "status": "treffer",
+          "portal": "https://jobs.siemens-energy.com/"
+        },
+        {
+          "name": "Vestas Wind Systems A/S",
+          "status": "treffer",
+          "portal": "https://www.vestas.com/en/careers"
+        },
+        {
+          "name": "Framatome SAS",
+          "status": "treffer",
+          "portal": "https://www.framatome.com/en/human-resources/"
+        },
+        {
+          "name": "Westinghouse Electric Company",
+          "status": "treffer",
+          "portal": "https://careers.westinghousenuclear.com/"
+        },
+        {
+          "name": "GE Vernova",
+          "status": "treffer",
+          "portal": "https://jobs.gecareers.com/vernova/global/en"
+        },
+        {
+          "name": "RWE AG",
+          "status": "beobachtet"
+        },
+        {
+          "name": "Ørsted A/S",
+          "status": "beobachtet"
+        }
+      ]
+    },
+    {
+      "name": "Verteidigung",
+      "firmen": [
+        {
+          "name": "Rheinmetall AG",
+          "status": "treffer",
+          "portal": "https://www.rheinmetall.com/de/karriere"
+        },
+        {
+          "name": "Diehl Defence GmbH & Co. KG",
+          "status": "treffer",
+          "portal": "https://www.diehl.com/de/karriere.html"
+        },
+        {
+          "name": "Hensoldt AG",
+          "status": "beobachtet"
+        },
+        {
+          "name": "KNDS Deutschland",
+          "status": "beobachtet"
+        }
+      ]
+    }
+  ]
+};
+// ===== END DATA SECTION =====
+
+
+function initHeader() {
+  document.getElementById('header-title').textContent = '🔎 Suchradius – ' + (PROFILE.name || '');
+  document.getElementById('header-subtitle').textContent = PROFILE.subtitle || '';
+  document.title = 'Suchradius – ' + (PROFILE.name || '');
+  const backLink = document.getElementById('back-link');
+  if (PROFILE.slug) backLink.href = PROFILE.slug + '_jobs_dashboard.html';
+}
+
+function renderScope() {
+  const kategorien = (SUCHRADIUS && SUCHRADIUS.kategorien) || [];
+  if (!kategorien.length) {
+    document.getElementById('scope-empty').style.display = 'block';
+    return;
+  }
+
+  if (SUCHRADIUS.standDatum) {
+    document.getElementById('header-subtitle').textContent =
+      (PROFILE.subtitle || '') + ' · Stand Suchradius: ' + SUCHRADIUS.standDatum;
+  }
+
+  if (Array.isArray(SUCHRADIUS.durchsuchtePortale) && SUCHRADIUS.durchsuchtePortale.length) {
+    document.getElementById('portale-liste').innerHTML =
+      '<strong>Durchsuchte Portale:</strong> ' + SUCHRADIUS.durchsuchtePortale.join(', ');
+  }
+
+  let firmenGesamt = 0;
+  let treffer = 0;
+  kategorien.forEach(k => {
+    const firmen = k.firmen || [];
+    firmenGesamt += firmen.length;
+    treffer += firmen.filter(f => f.status === 'treffer').length;
+  });
+
+  document.getElementById('stats-row').innerHTML = `
+    <div class="stat-card"><div class="number">${kategorien.length}</div><div class="label">Kategorien durchsucht</div></div>
+    <div class="stat-card"><div class="number">${firmenGesamt}</div><div class="label">Firmen recherchiert</div></div>
+    <div class="stat-card"><div class="number">${treffer}</div><div class="label">davon mit aktuellem Treffer</div></div>
+  `;
+
+  const list = document.getElementById('kategorien-liste');
+  list.innerHTML = kategorien.map(k => {
+    const firmen = k.firmen || [];
+    const chips = firmen.map(f => {
+      const cls = f.status === 'treffer' ? 'treffer' : 'beobachtet';
+      const icon = f.status === 'treffer' ? '✅' : '👁️';
+      const label = f.status === 'treffer' ? 'Treffer' : 'beobachtet, aktuell kein Treffer';
+      const inner = f.portal
+        ? `<a href="${f.portal}" target="_blank" rel="noopener">${f.name}</a>`
+        : f.name;
+      return `<span class="chip ${cls}" title="${label}">${icon} ${inner}</span>`;
+    }).join('');
+    return `
+      <div class="kategorie-card">
+        <div class="kategorie-head">
+          <h2>${k.name}</h2>
+          <span class="kategorie-count">${firmen.length} Firmen</span>
+        </div>
+        <div class="firmen-chips">${chips || '<span class="chip beobachtet">Keine Angaben</span>'}</div>
+      </div>
+    `;
+  }).join('');
+}
+
+initHeader();
+renderScope();
+</script>
+
+</body>
+</html>
