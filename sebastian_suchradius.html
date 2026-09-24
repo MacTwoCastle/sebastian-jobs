@@ -51,6 +51,9 @@
   .portale-liste { font-size: 0.82rem; color: var(--muted); margin-bottom: 18px; }
   .portale-liste strong { color: var(--text); }
 
+  .legende { display: flex; gap: 18px; flex-wrap: wrap; align-items: center; font-size: 0.82rem; color: var(--muted); margin-bottom: 18px; }
+  .legende .eintrag { display: inline-flex; align-items: center; gap: 6px; }
+
   .no-results { text-align: center; padding: 40px 20px; color: var(--muted); font-size: 0.95rem; }
 
   @media(max-width: 700px) { .container { padding: 14px; } .stats-row { flex-direction: column; } }
@@ -73,6 +76,11 @@
   </div>
 
   <div class="portale-liste" id="portale-liste"></div>
+
+  <div class="legende">
+    <span class="eintrag">✅ Treffer – Firma hat einen aktuellen, passenden Match im Dashboard</span>
+    <span class="eintrag">👁️ beobachtet – durchsucht, aktuell kein passender Treffer</span>
+  </div>
 
   <div class="stats-row" id="stats-row"></div>
 

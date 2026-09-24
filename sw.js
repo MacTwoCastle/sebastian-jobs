@@ -1,4 +1,4 @@
-﻿const CACHE_NAME = 'jobs-sebastian-24092026';
+﻿const CACHE_NAME = 'jobs-sebastian-24092026b';
 const ASSETS = [
   './sebastian_jobs_dashboard.html',
   './sebastian_suchradius.html',
@@ -34,4 +34,4 @@ self.addEventListener('fetch', event => {
       });
     })
   );
-});// Cache invalidation: Do 24. Sep 2026 (Suchradius-Seite ergänzt)
+});// Cache invalidation: Do 24. Sep 2026b (Legende Suchradius-Symbole)
