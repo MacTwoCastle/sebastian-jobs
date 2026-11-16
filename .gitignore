@@ -11,7 +11,7 @@
 !icon.svg
 !data/
 !data/tracker_sebastian.json
-!.github/
-!.github/skills/
-!.github/skills/job-dashboard-aktualisieren/
-!.github/skills/job-dashboard-aktualisieren/**
+!.claude/
+!.claude/skills/
+!.claude/skills/job-dashboard-aktualisieren/
+!.claude/skills/job-dashboard-aktualisieren/**

@@ -99,13 +99,35 @@ Die Feldstruktur und Qualitaetsregeln stehen in [dashboard-daten.md](./reference
 9a. Suchradius-Seite neu generieren.
     Falls `suchradius.json` existiert oder aktualisiert wurde, zusaetzlich `python3 scripts/generate_scope_page.py <Kandidat>` ausfuehren (siehe [generate_scope_page.py](../../../scripts/generate_scope_page.py)). Ergebnis: `<Kandidat>/<slug>_suchradius.html`.
 
-10. Ergebnis berichten.
+10. Veroeffentlichen (nur mit Bestaetigung des Nutzers).
+    Das Deploy-Repository des Kandidaten liegt unter `deploy/<kandidat>-jobs` (z. B. `deploy/ulf-jobs` mit Remote `MacTwoCastle/ulf-jobs`).
+    - `python3 scripts/publish_dashboard.py <Kandidat> <deploy-repo-name>` kopiert Dashboard, Suchradius-Seite, `sw.js`, Manifest und Tracker-JSON in den Deploy-Klon und stellt sie per `git add` bereit. Das Skript pusht nicht.
+    - Danach im Deploy-Klon `git status` und `git diff --cached --stat` pruefen und dem Nutzer die Aenderungen zusammenfassen.
+    - Erst nach ausdruecklicher Bestaetigung committen und pushen (`git commit`, `git push origin main`). Niemals ohne Rueckfrage pushen.
+    - Wurden Dateien im Hauptprojekt (Skill, Skripte, Template) geaendert, ist das ein getrennter Schritt und kein Teil des Deploy-Repos.
+
+11. Ergebnis berichten.
    Fasse zusammen:
    - welche Branchen geaendert wurden
    - welche Firmen hinzugekommen, entfernt oder hochgestuft wurden
    - wie viele Jobs neu, entfernt oder aktualisiert wurden
    - ob das Dashboard neu generiert wurde
    - ob `suchradius.json` aktualisiert und die Suchradius-Seite neu generiert wurde
+
+## Recherchemethoden (Stand 16.11.2026)
+
+Es gibt im Repository keinen Abruf-Code; Recherche und Linkpruefung laufen ueber die Werkzeuge der Sitzung (WebSearch, WebFetch, Bash mit `urllib`/`curl`). Erfahrungswerte:
+
+- **XING-Einzelseiten:** mit normalem Browser-User-Agent abrufbar. HTTP 410 = Anzeige entfernt (`linkOffline` setzen bzw. anonyme Vermittler-Anzeigen entfernen), HTTP 200 = aktiv. Im HTML stehen `datePosted` und `validThrough` (JSON-LD), daraus `alter_tage` und Gueltigkeit uebernehmen. XING-Suche und `WebSearch` auf xing.com funktionieren nicht.
+- **StepStone-Trefferlisten** (`https://www.stepstone.de/jobs/<suchbegriff>`, z. B. `cio`, `head-of-it`, `ciso`): abrufbar. Titel, Firma und Datum stehen in der Liste, der Ort steht im URL-Slug (`Titel-Ort-Firma--ID`). Die Zuordnung per Regex ueber Kartengrenzen ist unzuverlaessig; Ort immer aus dem Slug lesen.
+- **StepStone-Einzelseiten:** nach ca. 30 Abrufen HTTP 403 (Ratenbegrenzung). Wenige gezielt abrufen, nicht massenhaft. Fehlende Detailpruefung im Feld `veroeffentlicht` vermerken.
+- **Indeed:** liefert HTTP 401 (aktiver Bot-Schutz), nicht pruefbar. Bestehende Indeed-Eintraege nicht loeschen, sondern als nicht pruefbar vermerken.
+- **WebSearch:** nur US-Suche, liefert fuer deutsche Stellen kaum Treffer; eher fuer Firmenkennzahlen geeignet als fuer Stellenanzeigen.
+- Seit Oktober 2026 sind Indeed und StepStone-Einzelseiten auch in frueheren Laeufen nicht mehr abrufbar gewesen; vorher (Aug./Sep. 2026) ging es.
+
+## Firmenkennzahlen
+
+Fehlen `ma_label` oder `umsatz` fuer neue Firmen, werden sie recherchiert (Geschaeftsberichte, Unternehmensseiten, Register). Nichts schaetzen oder erfinden. Ohne belastbare Quelle `ma: 0`, `ma_label` und `umsatz` auf `"k.A."` setzen. Bei Drittangaben oder aelteren Zahlen Quelle/Jahr im Label nennen, z. B. `"~500 (weltweit, 2023)"`. Bei widerspruechlichen Quellen `"k.A."`.
 
 ## Entscheidungsregeln
 
